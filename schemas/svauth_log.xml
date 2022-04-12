@@ -1,0 +1,6 @@
+<table name="svauth_log">
+    <column name="auth_log_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="di" type="varchar" size="64" notnull="notnull" index="idx_di"  />
+    <column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+    <column name="auth_info" type="text" />
+</table>

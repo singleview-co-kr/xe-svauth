@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<title xml:lang="ko">싱글뷰 SMS 플러그인</title>
+	<description xml:lang="ko">싱글뷰 SMS 플러그인 textmessage 모듈 필수</description>
+	<version>0.1</version>
+	<date>2017-08-05</date>
+	<author email_address="root@singleview.co.kr" link="http://singleview.co.kr">
+		<name xml:lang="ko">Singleview.co.kr</name>
+		<homepage xml:lang="ko">Singleview.co.kr</homepage>
+	</author>
+	<license link="">Commercial</license>
+	<extra_vars>
+		<group>
+			<title xml:lang="ko">기본설정</title>
+			<var name="sender_no" type="text">
+				<title xml:lang="ko">SMS 발신번호</title>
+				<description xml:lang="ko">SMS에 표시되는 발신번호를 입력합니다.</description>
+			</var>
+			<var name="digit_number" type="text">
+				<title xml:lang="ko">인증번호 자릿수</title>
+				<description xml:lang="ko">예를 들어, 5로 설정하면 다섯자리의 숫자값이 인증코드로 발송됩니다.</description>
+			</var>
+			<var name="message_content" type="text">
+				<title xml:lang="ko">인증번호 치환</title>
+				<description xml:lang="ko">%authcode%에 인증번호가 치환되어 들어갑니다. 80자 이내의 적절한 문구로 수정가능합니다. 예) [핸드폰인증] %authcode% ☜ 인증번호를 정확히 입력해 주세요.</description>
+			</var>
+			<var name="day_try_limit" type="text">
+				<title xml:lang="ko">인증번호 1일 횟수 제한</title>
+				<description xml:lang="ko">같은 번호로 지정한 횟수 이상 인증번호 요청시 해당 번호를 하루동안 금지합니다.</description>
+			</var>
+			<var name="authcode_delay_sec" type="text">
+				<title xml:lang="ko">인증번호 재전송 제한</title>
+				<description xml:lang="ko">지정한 초만큼 대기 후 인증번호를 재전송 받도록 합니다. 예) 20으로 설정하면 인증번호를 전송받은 후 20초 후에 재전송이 가능합니다.</description>
+			</var>
+			<var name="duplicate_restriction_sec" type="text">
+				<title xml:lang="ko">중복응모 제한초</title>
+				<description xml:lang="ko">첫 응모 뒤 입력하신 초가 경과한 후에 재응모가 가능합니다. 0이면 시간제한이 없어집니다.</description>
+			</var>
+			<var name="forbid_exchange_no" type="text">
+				<title xml:lang="ko">응모 금지 국번</title>
+				<description xml:lang="ko">050 등과 같은 임시 번호, 인터넷 전화를 통한 인증 시도를 차단합니다. 여러 국번은 ,로 구분합니다.</description>
+			</var>
+			<var name="sms_auth_agreement" type="textarea">
+				<title xml:lang="ko">SMS인증 약관</title>
+				<description xml:lang="ko">SMS 인증 약관을 입력합니다.</description>
+			</var>
+		</group>
+	</extra_vars>
+</plugin>

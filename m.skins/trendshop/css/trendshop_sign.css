@@ -1,0 +1,26 @@
+@charset "utf-8";
+.signin-select{margin:0 -16px 30px; border-bottom:1px solid #ddd}
+.signin-select ul{margin:0; padding:0 16px; list-style:none}
+.signin-select ul li{margin:0; padding-top:0; padding-bottom:0; background:#f2f2f2; border-top:1px solid #ddd; border-right:1px solid #ddd}
+.signin-select ul li:first-child{border-left:1px solid #ddd}
+.signin-select ul li a{display:block; height:40px; line-height:40px; text-align:center; font-weight:normal; font-size:1.083em; color:#888}
+.signin-select ul li.active{background:#fff}
+.signin-select ul li.active a{color:#555}
+
+#signin-form .signin-idpw{margin-bottom:10px}
+#signin-form .signin-idpw input{display:block; width:100%; height:44px; margin:0 0 5px 0; padding:0 0 0 8px; background:#fff; border:1px solid #ddd; border-radius:0; font-family:돋움,sans-serif; font-size:1.250em; color:#333; outline:none; -webkit-appearance:none}
+
+#signin-form .signin-auto{margin-bottom:20px}
+#signin-form .signin-auto input{display:inline-block; margin:0 3px 0 0; padding:0; vertical-align:middle; cursor:pointer}
+#signin-form .signin-auto label{display:inline-block; vertical-align:middle; font-family:돋움,sans-serif; font-size:1.083em; color:#666; cursor:pointer}
+
+#signin-form .signin-submit{}
+#signin-form .signin-submit #siginin-btn{display:block; width:100%; height:44px; margin:0; padding:0; background:#53617f; border:1px solid #53617f; border-radius:0; font-size:1.250em; font-weight:bold; color:#fff; outline:none; cursor:pointer; -webkit-appearance:none}
+
+#signin-form .signin-ex{margin-top:16px; text-align:center; font-size:1.083em; color:#666}
+#signin-form .signin-ex a{color:#666}
+#signin-form .signin-ex a:hover,
+#signin-form .signin-ex a:focus{color:#af5592}
+
+#signin-form  #warning > p{margin:10px 0; font-family:돋움,sans-serif; color:#888}
+#signin-form .agreement{margin-bottom:15px; padding:15px 15px 10px 15px; background:#f8f8f8; border:1px solid #dedede; border-radius:5px}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<title xml:lang="ko">KCB okcert3 플러그인</title>
+	<description xml:lang="ko">KCB okcert3 v2.0.1 플러그인</description>
+	<version>0.1</version>
+	<date>2019-06-18</date>
+	<author email_address="root@singleview.co.kr" link="http://singleview.co.kr">
+		<name xml:lang="ko">Singleview.co.kr</name>
+		<homepage xml:lang="ko">Singleview.co.kr</homepage>
+	</author>
+	<license link="">Commercial</license>
+	<extra_vars>
+		<group>
+			<title xml:lang="ko">기본설정</title>
+			<var name="license" type="file">
+				<title xml:lang="ko">KCB IDS 라이선스파일</title>
+				<description xml:lang="ko">KCB로부터 전달받은 IDS_01_PROD 라이선스파일</description>
+			</var>
+			<var name="SITE_NAME" type="text">
+				<title xml:lang="ko">표시 사이트명</title>
+				<description xml:lang="ko">회원사 요청 사이트명 (최대 50bytes)</description>
+			</var>
+			<var name="SITE_URL" type="text">
+				<title xml:lang="ko">사이트 URL</title>
+				<description xml:lang="ko">회원사 요청 사이트 URL. (www포함하는 경우 www. 까지 반드시 입력. http:// 제외)</description>
+			</var>
+			<var name="CP_CD" type="text">
+				<title xml:lang="ko">회원사코드</title>
+				<description xml:lang="ko">KCB로 부터 부여받은 회원사코드 12자리</description>
+			</var>
+		</group>
+		<group>
+			<title xml:lang="ko">옵션</title>
+			<var name="guide_text" type="text">
+				<title xml:lang="ko">안내문구</title>
+				<description xml:lang="ko">팝업창에 뜰 안내문구를 입력하세요.</description>
+			</var>
+		</group>
+	</extra_vars>
+</plugin>

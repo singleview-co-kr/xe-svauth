@@ -1,0 +1,38 @@
+<include target="_header.html" />
+
+<form id="fo_plugin" action="./" class="x_form-horizontal" method="post" enctype="multipart/form-data">
+<input type="hidden" name="module" value="admin" />
+<input type="hidden" name="act" value="procSvauthAdminUpdateBoardConnect" />
+
+<section class="section">
+	<h1>{$lang->board_auth_connection}<a href="#plugin_srl_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+	<p id="plugin_srl_help" class="x_help-block" hidden>{$lang->about_board_auth_connection}</p></h1>
+	<table cellspacing="0" class="x_table x_table-striped x_table-hover">
+		<thead>
+			<tr>
+			<th scope="col"><div>{$lang->no}</div></th>
+			<th scope="col"><div>{$lang->title}</div></th>
+			<th scope="col"><div>{$lang->plugins}</div></th>
+			</tr>
+		</thead>
+		<tbody>
+			<!--@foreach($board_list as $no => $val)-->
+			<tr class="row{$cycle_idx}">
+				<td class="number center">{$no}</td>
+				<td class="wide">{htmlspecialchars($val->mid)}</td>
+				<td>
+					<select name="board_{$val->module_srl}" id="board_{$val->module_srl}" >
+						<option value='' selected="selected"|cond="$config->skin== $key">{$lang->not_selected}</option>
+						<option loop="$plugins=>$plugin_no,$plugin_val" value="{$plugin_val->plugin_srl}" selected="selected"|cond="$config->board_plugin[$val->module_srl]== $plugin_val->plugin_srl">{$plugin_val->title}</option>
+					</select>
+				</td>
+			</tr>
+			<!--@end-->
+		</tbody>
+	</table>
+</section>
+<div class="x_clearfix btnArea">
+	<button type="submit" class="x_btn x_btn-primary" accesskey="s">{$lang->cmd_save}</button>
+</div>
+</form>
+<include target="_page_navigation.html" />

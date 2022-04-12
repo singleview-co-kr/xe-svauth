@@ -1,0 +1,11 @@
+<query id="updateSmsAuth" action="update">
+	<tables>
+		<table name="svauth_sms_log" />
+	</tables>
+	<columns>
+		<column name="passed" var="passed" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="sms_auth_srl" var="sms_auth_srl" notnull="notnull" />
+	</conditions>
+</query>

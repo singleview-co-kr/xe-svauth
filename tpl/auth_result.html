@@ -1,0 +1,19 @@
+	<script language="javascript" type="text/javascript" >
+	function fncOpenerSubmit() {
+		opener.document.kcbResultForm.idcf_mbr_com_cd.value = "{$idcfMbrComCd}";
+		opener.document.kcbResultForm.hs_cert_svc_tx_seqno.value = "{$auth_info['hsCertSvcTxSeqno']}";
+		opener.document.kcbResultForm.hs_cert_msr_cd.value = "{$hsCertMsrCd}";
+		opener.document.kcbResultForm.result_cd.value = "{$auth_info['resultCd']}";
+		opener.document.kcbResultForm.result_msg.value = "{$auth_info['resultMsg']}";
+		opener.document.kcbResultForm.submit();
+		self.close();
+	}	
+	//문서가 로드된다음 실행
+	jQuery(document).ready(function($){
+		fncOpenerSubmit();
+	});
+	</script>
+	
+	<div style="text-align:center; padding:30px; background:#EEE; border:1px solid #ccc;">
+		요청하신 페이지로 이동합니다.
+	</div>

@@ -1,0 +1,12 @@
+<query id="getSmsAuth" action="select">
+	<tables>
+		<table name="svauth_sms_log" />
+	</tables>
+	<columns>
+		<column name="*" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="sms_auth_srl" var="sms_auth_srl" notnull="notnull" pipe="and" />
+		<condition operation="equal" column="regdate" var="regdate" pipe="and" />
+	</conditions>
+</query>

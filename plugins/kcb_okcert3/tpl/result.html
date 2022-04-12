@@ -1,0 +1,20 @@
+<script language="javascript" type="text/javascript" >
+function fncOpenerSubmit() {
+	opener.location.href = '/index.php?act=dispMemberSignUpForm';
+	self.close();
+}	
+</script>
+
+<block cond="$ret == 0"> 
+	<!---인증결과 복호화 성공 인증결과를 확인하여 페이지분기등의 처리를 수행해야한다.---->
+	<block cond="$retcode == 'B000'"> 
+		<script>alert('본인인증성공'); fncOpenerSubmit();</script>
+	</block>
+	<block cond="$retcode != 'B000'"> 
+		<script>alert('본인인증실패 : {$retcode}'); self.close();</script>
+	</block>
+</block>
+<block cond="$ret != 0"> 
+	<!---인증결과 복호화 실패 ---->
+	<script>alert('인증결과복호화 실패 : {$ret}'); self.close(); </script>
+</block>

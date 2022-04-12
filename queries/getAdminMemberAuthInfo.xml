@@ -1,0 +1,18 @@
+<query id="getAdminMemberAuthInfo" action="select">
+    <tables>
+        <table name="svauth" />
+    </tables>
+    <columns>
+		<column name="auth_date" />
+		<column name="user_name" />
+		<column name="birthday" />
+		<column name="gender" />
+		<column name="nationality" />
+		<column name="ISP" />
+		<column name="mobile" />
+    </columns>
+    <conditions>
+        <condition operation="equal" column="member_srl" var="member_srl" notnull="notnull" />
+		<condition operation="equal" column="is_deleted" var="is_deleted" notnull="notnull" default="N" pipe="and" />
+    </conditions>
+</query>

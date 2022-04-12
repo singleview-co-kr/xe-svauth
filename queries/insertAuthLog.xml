@@ -1,0 +1,11 @@
+<query id="insertAuthLog" action="insert">
+    <tables>
+        <table name="svauth_log" />
+    </tables>
+    <columns>
+		<column name="auth_log_srl" var="auth_log_srl" notnull="notnull"/>
+		<column name="di" var="di" notnull="notnull"/>
+        <column name="ci" var="ci" />
+        <column name="auth_info" var="auth_info" />
+    </columns>
+</query>

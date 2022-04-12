@@ -1,0 +1,15 @@
+<filter name="submit_auth_review" module="svauth" act="procSvauthReviewAuth">
+     <form>
+        <node target="plugin" required="true" />
+        <node target="title" required="true" />
+    </form>
+    <parameter>
+        <param name="plugin" target="plugin" />
+        <param name="title" target="title" />
+    </parameter>
+    <response callback_func="completeKcboknameReviewAuth">
+        <tag name="error" />
+        <tag name="message" />
+        <tag name="tpl" />
+    </response>
+</filter>

@@ -1,0 +1,24 @@
+@charset "utf-8";
+/*--[ Clearfix ]--*/
+.newclearfix:after{clear:both; content:' '; display:block; font-size:0; height:0; line-height:0; visibility:hidden; width:0}
+* html .newclearfix,:first-child+html .newclearfix{zoom:1}
+
+#signin-form{width:305px; margin:0 auto}
+#signin-form .signin-title{margin-bottom:70px; text-align:center}
+
+#signin-form .signin-idpw{float:left; width:220px; margin-right:5px}
+#signin-form .signin-idpw input{display:block; width:210px; margin:0 0 5px 0; padding:11px 0 10px 8px; background:#fff; border:1px solid #bbb; border-radius:0; font-family:돋움,sans-serif; font-size:12px; color:#aaa; outline:none; -webkit-appearance:none}
+#signin-form .signin-submit{float:left; width:80px}
+#signin-form .signin-submit #siginin-btn{display:block; width:79px; height:79px; margin:0; padding:0; background:#cf8cc2; border:none; border-radius:0; font-family:돋움,sans-serif; font-size:12px; font-weight:bold; color:#fff; outline:none; cursor:pointer; -webkit-appearance:none}
+
+#signin-form .signin-ex{margin-top:6px; font-family:돋움,sans-serif; font-size:11px; color:#888}
+#signin-form .signin-ex a{color:#888}
+#signin-form .signin-ex a:hover,
+#signin-form .signin-ex a:focus{color:#cf8cc2}
+#signin-form .signin-ex .signin-auto{float:left}
+#signin-form .signin-ex .signin-find{float:right}
+#signin-form .signin-ex .signin-auto input{margin:0 6px 0 0; padding:0; vertical-align:top; cursor:pointer}
+#signin-form .signin-ex .signin-auto label{cursor:pointer}
+
+#signin-form  #warning > p{margin:10px 0; font-family:돋움,sans-serif; font-size:11px; color:#888}
+#signin-form .agreement{margin-bottom:15px; padding:15px 15px 10px 15px; background:#f8f8f8; border:1px solid #dedede; border-radius:5px}

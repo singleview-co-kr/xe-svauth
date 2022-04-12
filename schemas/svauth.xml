@@ -1,0 +1,16 @@
+<table name="svauth">
+    <column name="member_srl" type="number" size="11" notnull="notnull" index="primary_key" />	
+    <column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+    <column name="di" type="varchar" size="64" notnull="notnull" index="idx_di" />	
+	<column name="result_cd" type="varchar" size="10" notnull="notnull" />
+	<column name="result_msg" type="varchar" size="50" notnull="notnull" />
+	<column name="seqno" type="varchar" size="30" notnull="notnull" />
+	<column name="auth_date" type="varchar" size="20" notnull="notnull" />
+	<column name="user_name" type="varchar" size="10" notnull="notnull" />
+	<column name="birthday" type="char" size="10" notnull="notnull" />
+	<column name="gender" type="char" size="2" notnull="notnull" />
+	<column name="nationality" type="char" size="2" notnull="notnull" />
+	<column name="ISP" type="varchar" size="10" notnull="notnull" />
+	<column name="mobile" type="char" size="12" notnull="notnull" />
+	<column name="is_deleted" type="char" size="1" default="N" />
+</table>

@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lang>
+	<item name="default_svauth_setting">
+		<value xml:lang="ko"><![CDATA[기본 설정]]></value>
+	</item>
+	<item name="svauth_module">
+		<value xml:lang="ko"><![CDATA[싱글뷰 핸드폰 실명인증]]></value>
+	</item>
+	<item name="cmd_basic_setting">
+		<value xml:lang="ko"><![CDATA[기본 설정]]></value>
+	</item>
+	<item name="cmd_auth_plugin">
+		<value xml:lang="ko"><![CDATA[실명인증 플러그인]]></value>
+	</item>
+	<item name="cmd_auth_plugin_create">
+		<value xml:lang="ko"><![CDATA[플러그인 생성]]></value>
+	</item>
+	<item name="cmd_auth_list_manage">
+		<value xml:lang="ko"><![CDATA[인증회원 관리]]></value>
+	</item>
+	<item name="cmd_auth_log_list_manage">
+		<value xml:lang="ko"><![CDATA[인증내역 관리]]></value>
+	</item>
+	<item name="cmd_board_connect">
+		<value xml:lang="ko"><![CDATA[게시판 인증 연동]]></value>
+	</item>
+	<item name="cmd_auth_sms_log_list_manage">
+		<value xml:lang="ko"><![CDATA[SMS 핸드폰 소유 인증내역 관리]]></value>
+	</item>
+	<item name="board_auth_connection">
+		<value xml:lang="ko"><![CDATA[게시판과 실명 인증 플러그인 연결]]></value>
+	</item>
+	<item name="about_board_auth_connection">
+		<value xml:lang="ko"><![CDATA[연결 게시판의 숨김 변수<BR>
+module_srl value="{$module_info->module_srl}"<BR>
+sv_plugin_srl value="{$nSvAuthPluginSrl}"<BR>
+is_interested value="1"<BR>
+연결 게시판의 사용자 정의 변수 순서<BR> 
+1	HTTP_INIT_REFERER	HTTP_INIT_REFERER	한줄 입력칸(text)<BR>
+2	HTTP_INIT_SOURCE	HTTP_INIT_SOURCE	한줄 입력칸(text)<BR>
+3	HTTP_INIT_MEDIUM	HTTP_INIT_MEDIUM	한줄 입력칸(text)<BR>
+4	HTTP_INIT_CAMPAIGN	HTTP_INIT_CAMPAIGN	한줄 입력칸(text)<BR>
+5	HTTP_INIT_KEYWORD	HTTP_INIT_KEYWORD	한줄 입력칸(text)<BR>
+6	applicant_phone_number	신청자_전화번호	한줄 입력칸(text)<BR>
+7	authcode	인증코드	한줄 입력칸(text)<BR>
+8	is_applied	경품신청	한줄 입력칸(text)<BR>
+9	sms_auth_agreement	휴대폰인증서비스동의	한줄 입력칸(text)<BR>
+10	privacy_usage_term	개인정보수집이용동의	한줄 입력칸(text)<BR>
+11	privacy_sharing	개인정보제3자제공동의(필수)	한줄 입력칸(text)]]></value>
+	</item>
+	<item name="plugins">
+		<value xml:lang="ko"><![CDATA[플러그인]]></value>
+	</item>
+	<item name="not_selected">
+		<value xml:lang="ko"><![CDATA[선택안함]]></value>
+	</item>
+	<item name="cmd_selected_sms_auth_manage">
+		<value xml:lang="ko"><![CDATA[선택한 SMS 인증 내역 관리]]></value>
+	</item>
+	<item name="auth_plugin_title">
+		<value xml:lang="ko"><![CDATA[플러그인 이름]]></value>
+	</item>
+	<item name="free_di">
+		<value xml:lang="ko"><![CDATA[중복인증 허용]]></value>
+	</item>
+	<item name="interception">
+		<value xml:lang="ko"><![CDATA[비회원 접속차단]]></value>
+	</item>
+	<item name="use_join">
+		<value xml:lang="ko"><![CDATA[가입시 본인인증 사용]]></value>
+	</item>
+	<item name="sealed">
+		<value xml:lang="ko"><![CDATA[열람권한없음]]></value>
+	</item>
+	<item name="use_nm">
+		<value xml:lang="ko"><![CDATA[비회원 본인인증 사용]]></value>
+	</item>
+	<item name="limit_age">
+		<value xml:lang="ko"><![CDATA[나이제한]]></value>
+	</item>
+	<item name="auth_name">
+		<value xml:lang="ko"><![CDATA[인증실명]]></value>
+	</item>
+	<item name="auth_code">
+		<value xml:lang="ko"><![CDATA[인증코드]]></value>
+	</item>
+	<item name="user_name">
+		<value xml:lang="ko"><![CDATA[인증실명]]></value>
+	</item>
+	<item name="auth_mobile_no">
+		<value xml:lang="ko"><![CDATA[인증핸드폰]]></value>
+	</item>
+	<item name="auth_date">
+		<value xml:lang="ko"><![CDATA[인증일시]]></value>
+	</item>
+	<item name="is_deleted">
+		<value xml:lang="ko"><![CDATA[삭제여부]]></value>
+	</item>
+	<item name="gender">
+		<value xml:lang="ko"><![CDATA[인증성별]]></value>
+	</item>
+	<item name="mobile">
+		<value xml:lang="ko"><![CDATA[인증핸드폰]]></value>
+	</item>
+	<item name="birthday">
+		<value xml:lang="ko"><![CDATA[인증생일]]></value>
+	</item>
+	<item name="nationality">
+		<value xml:lang="ko"><![CDATA[인증국적]]></value>
+	</item>
+	<item name="ISP">
+		<value xml:lang="ko"><![CDATA[인증통신사]]></value>
+	</item>
+	<item name="auth_result_msg">
+		<value xml:lang="ko"><![CDATA[일증결과]]></value>
+	</item>
+	<item name="about_svauth">
+		<value xml:lang="ko"><![CDATA[각 실명인증 제공사의 플러그인을 선택하여 사용합니다. svauth addon이 필수입니다. /config/func.inc.php::checkCSRF()에 다음 코드를 추가해야 합니다. $sTargetModule = Context::get('module');	if( $sTargetModule == 'svauth' ) return TRUE;]]]></value>
+		<value xml:lang="en"><![CDATA[You can manage the auth plug-in for each service provider.]]></value>
+	</item>
+	<item name="about_auth_plugin">
+		<value xml:lang="ko"><![CDATA[각 실명인증 제공사의 플러그인을 선택하여 사용합니다.]]></value>
+		<value xml:lang="en"><![CDATA[You can manage the auth plug-in for each service provider.]]></value>
+	</item>
+	<item name="about_auth_plugin_title">
+		<value xml:lang="ko"><![CDATA[실명인증 플러그인의 표시명을 정의합니다.]]></value>
+		<value xml:lang="en"><![CDATA[You can define auth plug-in title.]]></value>
+	</item>
+	<item name="about_auth_plugin">
+		<value xml:lang="ko"><![CDATA[인증 플러그인을 선택해 주세요.]]></value>
+		<value xml:lang="en"><![CDATA[Select authentication plug-in.]]></value>
+	</item>
+	<item name="about_free_di">
+		<value xml:lang="ko"><![CDATA[동일 정보로 실명 인증을 반복할 수 있도록 허용합니다.]]></value>
+	</item>
+	<item name="about_interception">
+		<value xml:lang="ko"><![CDATA[비회원의 사이트 접속을 통제합니다. 성인사이트의 경우 차단을 권장합니다.]]></value>
+	</item>
+	<item name="about_use_join">
+		<value xml:lang="ko"><![CDATA[회원가입시 본인인증을 사용하도록 합니다.]]></value>
+	</item>
+	<item name="about_use_nm">
+		<value xml:lang="ko"><![CDATA[비회원이 본인인증을 통해 임시로그인 (비회원 접속차단시)이 가능하도록 합니다.<br />* 로그인스킨이 기본스킨으로 변경됩니다. 본인인증 모듈의 별도스킨수정을 통해 수정하실 수 있습니다.]]></value>
+	</item>
+	<item name="about_limit_age">
+		<value xml:lang="ko"><![CDATA[나이에 숫자를 적으시면 동작합니다. 본인인증 후 "만" 나이에 따라 접근을 제한합니다.]]></value>
+	</item>
+	<item name="about_auth_delete">
+		<value xml:lang="ko"><![CDATA[실명 인증 내역과 회원 정보가 삭제됩니다.]]></value>
+	</item>
+	<item name="msg_error_svauth_log_db_query">
+		<value xml:lang="ko"><![CDATA[인증 DB 이상입니다.]]></value>
+	</item>
+	<item name="msg_no_auth_instance">
+		<value xml:lang="ko"><![CDATA[인증 내역이 없습니다.]]></value>
+	</item>
+	<item name="msg_weird_auth_record">
+		<value xml:lang="ko"><![CDATA[인증 내역에 오류가 있는 것 같습니다.]]></value>
+	</item>
+</lang>

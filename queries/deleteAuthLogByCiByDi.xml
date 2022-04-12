@@ -1,0 +1,9 @@
+<query id="deleteAuthLogByCiByDi" action="delete">
+    <tables>
+        <table name="svauth_log" />
+    </tables>
+	<conditions>
+        <condition operation="equal" column="ci" var="ci" notnull="notnull" />
+		<condition operation="equal" column="di" var="di" notnull="notnull" pipe="and" />
+    </conditions>
+</query>

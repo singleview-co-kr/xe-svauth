@@ -1,0 +1,166 @@
+@charset "utf-8"; 
+#signup-form{}
+
+/* Agreement */
+#signup-form .agreement{width:100%; margin-bottom:45px}
+#signup-form .agreement .agree-text{height:150px; overflow-y:auto; margin-bottom:7px; padding:8px; background:#fcfcfc; border:1px solid #ddd}
+#signup-form .agreement .agree-confirm{}
+#signup-form .agreement .agree-confirm input{display:inline-block; margin:0; padding:0; vertical-align:middle; cursor:pointer}
+#signup-form .agreement .agree-confirm label{display:inline-block; margin:0; padding:0; vertical-align:middle; font-family:돋움,sans-serif; font-size:1.083em; color:#666; cursor:pointer}
+
+
+/* Form Table */
+#signup-table{width:100%; margin:0; padding:0; border:1px solid #ddd; border-spacing:0}
+#signup-table th,
+#signup-table td{padding:8px; vertical-align:middle; text-align:left; font-weight:normal; font-size:1.083em; color:#666}
+#signup-table td{font-family:돋움,sans-serif}
+#signup-table thead th,
+#signup-table thead td{padding-top:13px; padding-bottom:12px; background:#fafafa; border-bottom:1px solid #ddd; color:#333}
+#signup-table thead th{font-weight:bold}
+#signup-table thead td{text-align:right}
+#signup-table tbody th,
+#signup-table tbody td{border-bottom:1px solid #f2f2f2}
+#signup-table tbody .last-tr th,
+#signup-table tbody .last-tr td{border-bottom:0}
+#signup-table tbody th{width:33.3%}
+#signup-table tbody td{width:67.7%}
+#signup-table em{font-style:normal; color:#e76868}
+
+@media (min-width:480px) {
+	#signup-table tbody th{width:25%}
+	#signup-table tbody td{width:75%}
+
+}
+@media (min-width:768px) {
+	#signup-table tbody th{width:20%}
+	#signup-table tbody td{width:80%}
+
+}
+
+/* Input Form */
+#signup-form fieldset{margin:0; padding:0; border:0}
+#signup-form input[type='text'],
+#signup-form input[type='password'],
+#signup-form input[type='email'],
+#signup-form input[type='url'],
+#signup-form input[type='search'],
+#signup-form input[type='tel'],
+#signup-form input[type="datetime"],
+#signup-form input[type="datetime-local"],
+#signup-form input[type="date"],
+#signup-form input[type="month"],
+#signup-form input[type="time"],
+#signup-form input[type="week"],
+#signup-form input[type="number"],
+#signup-form input[type="color"],
+#signup-form input[type="submit"],
+#signup-form input[type="reset"],
+#signup-form input[type="button"],
+#signup-form textarea{border-radius:0; -webkit-appearance:none; font-size:1.154em}
+#signup-form input,
+#signup-form select,
+#signup-form textarea{outline:none}
+#signup-form th label{display:block; padding-top:3px}
+#signup-form td label{margin-right:10px}
+#signup-form select,
+#signup-form input[type="text"],
+#signup-form input[type="password"],
+#signup-form input[type="email"],
+#signup-form input[type="url"],
+#signup-form input[type="search"],
+#signup-form input[type="tel"],
+#signup-form input[type="datetime"],
+#signup-form input[type="datetime-local"],
+#signup-form input[type="date"],
+#signup-form input[type="month"],
+#signup-form input[type="time"],
+#signup-form input[type="week"],
+#signup-form input[type="number"],
+#signup-form input[type="color"]{height:38px; padding:0 8px; vertical-align:middle; font-size:1.154em; color:#333}
+#signup-form input[type='text'],
+#signup-form input[type='password'],
+#signup-form input[type='email'],
+#signup-form input[type='url'],
+#signup-form input[type='search'],
+#signup-form textarea{width:100%}
+#signup-form textarea{padding:0 8px; color:#333}
+#signup-form textarea,
+#signup-form input[type="text"],
+#signup-form input[type="password"],
+#signup-form input[type="datetime"],
+#signup-form input[type="datetime-local"],
+#signup-form input[type="date"],
+#signup-form input[type="month"],
+#signup-form input[type="time"],
+#signup-form input[type="week"],
+#signup-form input[type="number"],
+#signup-form input[type="email"],
+#signup-form input[type="url"],
+#signup-form input[type="search"],
+#signup-form input[type="tel"],
+#signup-form input[type="color"]{background-color:#fff; border:1px solid #d8d8d8}
+#signup-form label,
+#signup-form input[type="file"],
+#signup-form input[type="image"],
+#signup-form input[type="submit"],
+#signup-form input[type="reset"],
+#signup-form input[type="radio"],
+#signup-form input[type="checkbox"]{vertical-align:middle; cursor:pointer}
+#signup-form input[type="file"]{height:28px; cursor:pointer}
+#signup-form input[type='tel']{width:52px !important}
+#signup-form select{margin:0; background:#fff; border:1px solid #cccccc; border-radius:0; cursor:pointer}
+#signup-form select[multiple],
+#signup-form select[size]{height:auto}
+#signup-form input[disabled],
+#signup-form select[disabled],
+#signup-form textarea[disabled],
+#signup-form input[readonly],
+#signup-form select[readonly],
+#signup-form textarea[readonly]{background-color:#eee; cursor:not-allowed}
+#signup-form input[type="radio"][disabled],
+#signup-form input[type="checkbox"][disabled],
+#signup-form input[type="radio"][readonly],
+#signup-form input[type="checkbox"][readonly]{background-color:transparent}
+
+/* Address XE Core 1.5 ~ 1.7.12 */
+#signup-form .form-horizontal .krZip .addr_indicator{margin:0}
+#signup-form .form-horizontal .krZip .addr_indicator .current_address{cursor:pointer}
+
+#signup-form .form-horizontal .krZip .addr1_selector li,
+#signup-form .form-horizontal .krZip .addr2_selector li{float:left; margin:0 5px 5px 0}
+#signup-form .form-horizontal .krZip .addr1_selector li button.btn,
+#signup-form .form-horizontal .krZip .addr2_selector li button.btn{margin:0 !important; background:#fff}
+
+/* Address XE Core 1.7.12 ~ */
+#signup-form .krZip .krzip-postcode-wrap label{display:none}
+#signup-form .krZip .krzip-postcode-wrap input.krzip-postcode{width:80px; min-width:80px; height:38px; padding:0 5px; line-height:38px}
+#signup-form .krZip .krzip-postcode-wrap input.krzip-search{height:38px !important; margin:0 !important; padding:0 10px !important; background:#f6f6f6; border:1px solid #ccc; border-radius:0; box-shadow:none; line-height:normal !important; font-family:돋움,sans-serif; color:#888; text-shadow:none; outline:none; -webkit-appearance:none}
+
+#signup-form .krZip .krzip-address-wrap{}
+#signup-form .krZip .krzip-address-wrap label{display:none}
+#signup-form .krZip .krzip-address-wrap input.krzip-roadAddress,
+#signup-form .krZip .krzip-address-wrap input.krzip-extraAddress,
+#signup-form .krZip .krzip-address-wrap .krzip-jibunAddress,
+#signup-form .krZip .krzip-detailAddress-wrap input.krzip-detailAddress{width:100%; height:38px; margin-top:8px; padding:0 5px; line-height:38px}
+#signup-form .krZip .krzip-detailAddress-wrap{margin-top:16px}
+#signup-form .krZip .krzip-detailAddress-wrap label{display:block; margin-right:0}
+#signup-form .krZip .krzip-guide{height:auto; margin-top:8px}
+
+
+/* Help */
+#signup-form .form-horizontal .help-inline,
+#signup-form .form-horizontal .help-block{margin:5px 0 0 0; padding:0}
+#signup-form .form-horizontal .hide{display:none}
+
+/* Button */
+#signup-form input.btn,
+#signup-form input[type="button"],
+#signup-form button.btn{height:38px !important; margin-top:5px; padding:0 10px !important; background:#f6f6f6; border:1px solid #ccc; border-radius:0; box-shadow:none; line-height:38px !important; font-family:돋움,sans-serif; color:#888; text-shadow:none; outline:none; -webkit-appearance:none}
+#signup-form input.btn:hover,
+#signup-form input.btn:focus,
+#signup-form input[type="button"].btn:hover,
+#signup-form input[type="button"].btn:focus,
+#signup-form button.btn:hover,
+#signup-form button.btn:focus{border-color:#aaa !important}
+
+#signup-form .signup-submit{display:block; width:100%; height:44px; margin:16px 0 0 0; padding:0; background:#53617f; border:1px solid #53617f; box-shadow:none; vertical-align:middle; font-weight:bold; font-size:1.250em; color:#fff; outline:none; cursor:pointer}

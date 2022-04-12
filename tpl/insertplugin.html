@@ -1,0 +1,36 @@
+<!--%import("filter/insert_plugin.xml")-->
+<!--%import("js/script.js")-->
+
+<include target="_header.html" />
+<form action="./" class="x_form-horizontal" method="post" onsubmit="return procFilter(this, insert_plugin)">
+	<section class="section">
+		<h1>{$lang->subtitle_primary}</h1>
+		<div class="x_control-group">
+			<label class="x_control-label" for="lang_plugin">{$lang->cmd_auth_plugin}</label>
+			<div class="x_controls">
+				<select name="plugin" id="plugin">
+					<optgroup label="Plugins">
+					<!--@foreach($plugins as $key => $val)-->
+					<option value="{$val->plugin}" > <!--@if($val->title)-->{$val->title} ({$val->plugin})<!--@else-->{$val->plguin}<!--@end--></option>
+					<!--@end-->
+					</optgroup>
+				</select>
+				<a href="#layout_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="layout_help" class="x_help-block" hidden>{$lang->about_auth_plugin}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="title">{$lang->auth_plugin_title}</label>
+			<div class="x_controls">
+				<input type="text" name="title" id="title" value=""/>
+				<a href="#layout_auth_plugin_title_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="layout_auth_plugin_title_help" class="x_help-block" hidden>{$lang->about_auth_plugin_title}</p>
+			</div>
+		</div>
+	</section>
+	<div class="x_clearfix btnArea">
+		<div class="x_pull-right">
+			<button class="x_btn x_btn-primary" type="submit">{$lang->cmd_next}</button>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,49 @@
+<include target="_header.html" />
+
+<form name="updateConfig" action="{getUrl('')}" method="post" enctype="multipart/form-data" class="form">
+	<input type="hidden" name="act" value="procSvauthAdminInsertConfig" />
+	<input type="hidden" name="module" value="{$module}" />
+	<input type="hidden" name="return_act" value="{$act}" />
+	
+	<ul>
+		<li>
+			<p class="q"><label for="free_di">중복가입 허용</label></p>
+			<p class="a">
+				<select name="free_di" id="free_di">
+					<option value="N" selected="selected"|cond="$config->free_di == 'N' || !$config->free_di">중복가입 허용안함</option>
+					<option value="Y" selected="selected"|cond="$config->free_di == 'Y'">중복가입 허용</option>
+				</select>
+			</p>
+			<p class="desc">아이핀 및 안심본인인증을 통해 얻은 DI값으로 중복가입을 검사합니다.</p>
+		</li>		
+	</ul>
+	<table class="rowTable" width="100%" cellpadding="0" cellspacing="0">
+		<caption> 사용자 정의항목 연동 / 통신사 및 휴대전화는 아이핀사용시 값이 없으므로, "필수"를 반드시 해제하셔야합니다. </caption>
+		<thead>
+			<tr><th>항목</th><th>입력항목 ID</th><th>노출/수정여부</th></tr>
+		</thead>
+		<tbody>
+			<tr loop="$extra_vars_list => $key,$val">
+				<td>{$val}</td>
+				<td>
+					<!--@if($key == 'user_name' || $key == 'birthday')-->
+					<input type="hidden" name="id_{$key}" value="{$key}" />{$key}
+					<!--@else-->
+					<input type="text" name="id_{$key}" value="{$config->extra_vars[$key]['id']}" />
+					<!--@end-->
+				</td>
+				<td>
+					<select name="ty_{$key}" id="ty_{$key}">
+						<option value="all" selected="selected"|cond="$config->extra_vars[$key]['ty'] == 'all' || !$extra_vars[$key]['ty']">노출 및 수정 허용</option>
+						<option value="nomod" selected="selected"|cond="$config->extra_vars[$key]['ty'] == 'nomod'">수정불가</option>
+						<option value="hide" selected="selected"|cond="$config->extra_vars[$key]['ty'] == 'hide'">노출안함</option>
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btnArea">
+		<span class="btn"><input type="submit" value="{$lang->cmd_registration}" /></span>
+	</div>
+</form>
+<include target="_footer.html" />

@@ -1,0 +1,14 @@
+<query id="insertSmsAuth" action="insert">
+	<tables>
+		<table name="svauth_sms_log" />
+	</tables>
+	<columns>
+		<column name="module_srl" var="module_srl" notnull="notnull" />
+		<column name="clue" var="clue" notnull="notnull" />
+		<column name="authcode" var="authcode" notnull="notnull" />
+		<column name="country_code" var="country_code" />
+		<column name="passed" var="passed" default="N" />
+		<column name="ipaddress" var="ipaddress" default="N" />
+		<column name="regdate" var="regdate" default="curdate()" />
+	</columns>
+</query>

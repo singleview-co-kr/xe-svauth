@@ -1,0 +1,1 @@
+naver workplace -> mydrive -> kcb_okcert3_so_lib

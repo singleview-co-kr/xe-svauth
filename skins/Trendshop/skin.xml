@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">TRENDSHOP Member Auth Skin</title>
+    <description xml:lang="ko">TRENDSHOP Member Auth Skin</description>
+    <version>1.0.1</version>
+    <date>2015-05-07</date>
+    <author email_address="mail@cameron.co.kr" link="http://cameron.co.kr/">
+        <name xml:lang="ko">CAMERON</name>
+        <name xml:lang="en">CAMERON</name>
+    </author>
+</skin>

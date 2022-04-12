@@ -1,0 +1,17 @@
+<query id="getAuthLogList" action="select">
+    <tables>
+        <table name="svauth_log" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+	<conditions>
+        <condition operation="like" column="auth_info" var="search_keyword"/>
+    </conditions>
+	<navigation>
+        <index var="sort_index" default="auth_log_srl" order="desc" />
+        <list_count var="list_count" default="20" />
+        <page_count var="page_count" default="10" />
+        <page var="page" default="1" />
+    </navigation>
+</query>

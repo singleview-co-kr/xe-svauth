@@ -1,0 +1,38 @@
+<include target="_header.html" />
+<div>
+	<h2>{$plugin_info->title}</h2>
+</div>
+<section class="section">
+	<div class="x_control-group">
+		<label class="x_control-label">안내</label>
+		{$plugin_title}의 필수 구성요소가 설치되지 않았습니다.<BR>
+		<A HREF='./modules/svauth/plugins/kcb_okname/docs/techDoc.zip' target='_new'>여기서</A> 기술 문서를 다운 받으세요.<BR>
+		혹은 <A HREF='http://singleview.co.kr/?utm_source=<?=$_SERVER[SERVER_NAME]?>&utm_medium=referral&utm_campaign=XE_NS_ADMIN_AUTHMODULE_00_00' target='_new'>Singleview.co.kr</A>에 지원을 신청하세요.
+	</div>
+	<div class="x_control-group">
+		<label class="x_control-label">Plugin</label>
+		<div class="x_controls">
+			<span class="x_input-xlarge x_uneditable-input">{$plugin_info->title} ver {$plugin_info->version} ({$plugin_info->plugin})</span>
+		</div>
+	</div>
+<!--@if($plugin_info->description)-->
+	<div class="x_control-group">
+		<label class="x_control-label">{$lang->description}</label>
+		<div class="x_controls">
+			<span class="x_input-xlarge x_uneditable-input">{nl2br(trim($plugin_info->description))}<span/>
+		</div>
+	</div>
+<!--@end-->
+
+<!--@if($plugin_info->author[0]->homepage)-->
+	<div class="x_control-group">
+		<label class="x_control-label">{$lang->author}</label>
+		<div class="x_controls">
+			<span class="x_input-xlarge x_uneditable-input"><a href="{$plugin_info->author[0]->homepage}" target='_new' class="blue">{$plugin_info->author[0]->name}</a><span/>
+		</div>
+	</div>
+<!--@end-->
+</section>
+	<div class="x_clearfix btnArea">
+		<a href="{getUrl('act','dispSvauthAdminPluginList')}" class="x_btn">{$lang->cmd_list}</a>
+	</div>

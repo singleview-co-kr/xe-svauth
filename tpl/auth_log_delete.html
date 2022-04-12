@@ -1,0 +1,24 @@
+<include target="_header.html" />
+<form class='section' action="./" method="post" enctype="multipart/form-data">
+<input type="hidden" name="module" value="svauth" />
+<input type="hidden" name="act" value="procSvauthAdminDeleteAuthByAuthLog" />
+<input type="hidden" name="di" value="{$valid_di}" />
+<input type="hidden" name="ci" value="{$ci}" />
+<input type="hidden" name="success_return_url" value="{getUrl('act','dispSvauthAdminManageAuthList', 'di', '' )}" />
+    <h1>{$lang->confirm_delete}</h1>
+	{$lang->about_auth_delete}
+	<dl class="x_dl-horizontal">
+		<dt>{$lang->auth_result_msg}</dt>
+		<dd>{$result_msg}</dd>
+		<dt>{$lang->auth_date}</dt>
+		<dd>{$auth_date}</dd>
+		<dt>{$lang->auth_name}</dt>
+		<dd>{$user_name}</dd>
+		<dt>{$lang->auth_mobile_no}</dt>
+		<dd>{$mobile}</dd>
+	</dl>
+	<div class="btnArea">
+		<a href="{getUrl('act','dispSvauthAdminManageAuthList' )}" class="x_btn x_pull-left">{$lang->cmd_back}</a>
+		<span><input class="x_btn x_btn-danger" type="submit" value="{$lang->cmd_delete}" /></span>
+	</div>
+</form>

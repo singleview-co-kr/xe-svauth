@@ -1,0 +1,98 @@
+<include target="_header.html" />
+<form action="./" class="x_form-horizontal" method="post"  enctype="multipart/form-data">
+<input type="hidden" name="act" value="procSvauthAdminInsertConfig" />
+<input type="hidden" name="module" value="{$module}" />
+	<section class="section">
+		<h1>{$lang->default_svauth_setting}</h1>
+		<div class="x_control-group">
+			<label class="x_control-label">{$lang->cmd_auth_plugin}</label>
+			<div class="x_controls">
+				<select name="plugin_srl">
+					<option value="">{$lang->cmd_select}</option>
+					<option loop="$plugins=>$key,$val" value="{$val->plugin_srl}" selected="selected"|cond="$val->plugin_srl==$config->plugin_srl">{$val->title}</option>
+				</select>
+				<a href="#plugin_srl_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="plugin_srl_help" class="x_help-block" hidden>{$lang->about_auth_plugin}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="skin">{$lang->skin}</label>
+			<div class="x_controls">
+				<select name="skin" id="skin">
+					<option loop="$skin_list=> $key, $val" value="{$key}" selected="selected"|cond="$config->skin== $key">{$val->title}</option>
+				</select>
+				<a href="#skin_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="skin_help" class="x_help-block" hidden>{$lang->about_skin}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="mskin">{$lang->mobile_skin}</label>
+			<div class="x_controls">
+				<select name="mskin" id="mskin">
+					<option loop="$mskin_list=> $key, $val" value="{$key}" selected="selected"|cond="$config->mskin== $key || (!$config->skin && $key=='default')">{$val->title}</option>
+				</select>
+				<a href="#mobile_skin_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="mobile_skin_help" class="x_help-block" hidden>{$lang->about_skin}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="free_di">{$lang->free_di}</label>
+			<div class="x_controls">
+				<select name="free_di" id="free_di">
+					<option value="N" selected="selected"|cond="$config->free_di == 'N'">중복가입 허용안함</option>
+					<option value="Y" selected="selected"|cond="$config->free_di != 'N'">중복가입 허용</option>
+				</select>
+				<a href="#free_di_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="free_di_help" class="x_help-block" hidden>{$lang->about_free_di}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="interception">{$lang->interception}</label>
+			<div class="x_controls">
+				<select name="interception" id="interception">
+					<option value="N" selected="selected"|cond="$config->interception == 'N' || !$config->interception">비회원 접속 허용</option>
+					<option value="Y" selected="selected"|cond="$config->interception == 'Y'">비회원 접속 차단</option>
+				</select>
+				<a href="#interception_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="interception_help" class="x_help-block" hidden>{$lang->about_interception}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="use_join">{$lang->use_join}</label>
+			<div class="x_controls">
+				<select name="use_join" id="use_join">
+					<option value="N" selected="selected"|cond="$config->use_join == 'N' || !$config->use_join">본인인증 사용안함</option>
+					<option value="Y" selected="selected"|cond="$config->use_join == 'Y'">본인인증 사용함</option>
+				</select>
+				<a href="#use_join_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="use_join_help" class="x_help-block" hidden>{$lang->about_use_join}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="use_nm">{$lang->use_nm}</label>
+			<div class="x_controls">
+				<select name="use_nm" id="use_nm">
+					<option value="N" selected="selected"|cond="$config->use_nm == 'N' || !$config->use_nm">본인인증 사용안함</option>
+					<option value="Y" selected="selected"|cond="$config->use_nm == 'Y'">본인인증 사용함</option>
+				</select>
+				<a href="#use_nm_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="use_nm_help" class="x_help-block" hidden>{$lang->about_use_nm}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label class="x_control-label" for="limit_age">{$lang->limit_age}</label>
+			<div class="x_controls">
+				만 <input type="text" name="limit_age" id="limit_age" value="{$config->limit_age}">세 
+				<select name="limit_type">
+					<option selected="selected"|cond="$config->limit_type == 'up' || !$config->limit_type" value="up">이상만</option>
+					<option selected="selected"|cond="$config->limit_type == 'down'" value="down">미만만</option>
+				</select> 가입/이용이 가능하도록 설정합니다.
+				<a href="#limit_age_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+				<p id="limit_age_help" class="x_help-block" hidden>{$lang->about_limit_age}</p>
+			</div>
+		</div>
+	</section>
+	<div class="x_clearfix btnArea">
+		<input type="submit" class="x_btn x_btn-primary" value="{$lang->cmd_registration}" accesskey="s" />
+	</div>
+</form>

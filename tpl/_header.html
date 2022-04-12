@@ -1,0 +1,20 @@
+<div class="x_page-header">
+	<h1>
+		{$lang->svauth_module}
+		<span class="path" cond="$module_info->mid">
+			&gt; <a href="{getSiteUrl($module_info->domain,'','mid',$module_info->mid)}" target="_blank"|cond="$module=='admin'">{$module_info->mid}<block cond="$module_info->is_default=='Y'">({$lang->is_default})</block></a>
+		</span>
+		<a href="#aboutModule" data-toggle class="x_icon-question-sign">{$lang->help}</a>
+	</h1>
+</div>
+<p class="x_alert x_alert-info" id="aboutModule" hidden>{$lang->about_svauth}</p>
+<ul class="x_nav x_nav-tabs" cond="$module_info">
+	<li class="x_active"|cond="$act == 'dispSvauthAdminDefaultSetting'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminDefaultSetting')}">{$lang->cmd_basic_setting}</a></li>
+	<li class="x_active"|cond="$act=='dispSvauthAdminBoardConnect'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminBoardConnect')}">{$lang->cmd_board_connect}</a></li>
+	<li class="x_active"|cond="$act=='dispSvauthAdminPluginList'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminPluginList')}">{$lang->cmd_auth_plugin}</a></li>
+	<li class="x_active"|cond="$act == 'dispSvauthAdminInsertPlugin'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminInsertPlugin')}">{$lang->cmd_auth_plugin_create}</a></li>
+	<li class="x_active"|cond="$act == 'dispSvauthAdminManageAuthMemberList'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminManageAuthMemberList')}">{$lang->cmd_auth_list_manage}</a></li>
+	<li class="x_active"|cond="$act == 'dispSvauthAdminManageAuthList'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminManageAuthList')}">{$lang->cmd_auth_log_list_manage}</a></li>
+	<li class="x_active"|cond="$act == 'dispSvauthAdminManageSmsAuthList'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminManageSmsAuthList')}">{$lang->cmd_auth_sms_log_list_manage}</a></li>
+</ul>
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}"><p>{$XE_VALIDATOR_MESSAGE}</p></div>

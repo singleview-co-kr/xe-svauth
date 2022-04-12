@@ -1,0 +1,1254 @@
+v 0.2.1
+31st, Jan 2017
+1. 방치된 KCB 본인인증 모듈을 리모델링
+
+v 0.2.2
+11th, Feb 2017
+1. 싱글뷰 핸드폰 실명인증으로 이름 변경
+
+v 0.2.3
+12th, Feb 2017
+1. SESSION 값이 존재할 경우에만 회원가입 이벤트 발생할 때 실명인증된 값으로 변경
+./svauth.controller.php::triggerInsertMemberBefore()에서 아래의 코드를 
+$obj->user_name = $_SESSION['auth_info']['user_name'];
+$obj->birthday = $_SESSION['auth_info']['birthday'];
+
+아래와 같이 변경
+if( $_SESSION['auth_info']['user_name'] )
+	$obj->user_name = $_SESSION['auth_info']['user_name'];
+if( $_SESSION['auth_info']['birthday'] )
+	$obj->birthday = $_SESSION['auth_info']['birthday'];
+
+v 0.2.4
+15th, Feb 2017
+1. signup 스킨명 변경
+./svauth.view.php::dispSvauthLoginForm()에서 아래의 코드를
+$this->setTemplateFile('loginform');
+아래와 같이 변경
+$this->setTemplateFile('signup_form');
+
+
+v 0.2.5
+27th, Feb 2017
+1. 중복 실명인증 가입 방지 기능 활성화
+./plugins/kcb_okname/tpl/result_duplicated.html 추가
+
+./plugins/kcb_okname/kcb_okname.plugin.php::processResult()에서 아래의 코드를
+
+//만약 중복가입을 방지하고 있다면, DI조회후 결과값있는경우 다른페이지 set
+if($config->free_di != "Y")
+{
+	$check_args->di = $_SESSION['auth_info']["DI"];
+	$check_output = executeQueryArray('svauth.checkDi',$check_args);
+	if(count($check_output->data)) 
+		return $this->setTemplateFile('none_free_di');
+}
+
+Context::set('ret', $ret);
+Context::set('retcode', $retcode);
+
+$oTemplate = &TemplateHandler::getInstance();
+$tpl_path = _XE_PATH_."modules/svauth/plugins/kcb_okname/tpl";
+$tpl_file = 'result.html';
+
+$sHtml = $oTemplate->compile($tpl_path, $tpl_file);
+
+$output = new Object();
+$output->tpl = $sHtml;
+$output->auth_info = $_SESSION['auth_info'];
+return $output;
+
+아래와 같이 변경
+$oTemplate = &TemplateHandler::getInstance();
+$tpl_path = _XE_PATH_."modules/svauth/plugins/kcb_okname/tpl";
+$output = new Object();
+
+//만약 중복가입을 방지하고 있다면, DI조회후 결과값있는경우 다른페이지 set
+if($config->free_di != "Y")
+{
+	$check_args->di = $_SESSION['auth_info']["DI"];
+	$check_output = executeQueryArray('svauth.checkDi',$check_args);
+	if(count($check_output->data))
+	{
+		$output->tpl = $oTemplate->compile($tpl_path, 'result_duplicated.html');
+		//return $this->setTemplateFile('none_free_di');
+	}
+}
+else
+{
+	Context::set('ret', $ret);
+	Context::set('retcode', $retcode);
+	$output->tpl = $oTemplate->compile($tpl_path, 'result.html');
+	$output->auth_info = $_SESSION['auth_info'];
+//echo '<BR>'.__LINE__.'<BR>';
+//var_dump( $output );
+}
+return $output;
+//		return $oTemplate->compile($tpl_path, $tpl_file);
+
+v 0.2.6
+12th, Mar 2017
+1. 모바일 레이아웃, 스킨 기능 추가
+./svauth.mobile.php 추가
+
+2. 관리자 화면 UI를 최신 XE 버전으로 개선
+./tpl/setting.html 수정
+
+3. 관리자 화면 적재 정보 개선
+./svauth.admin.view.php::dispSvauthAdminDefaultSetting()에 아래의 코드를 추가
+
+// 레이아웃 목록을 구해옴
+$oLayoutModel = &getModel('layout');
+$layout_list = $oLayoutModel->getLayoutList();
+Context::set('layout_list', $layout_list);
+$mobile_layout_list = $oLayoutModel->getLayoutList(0,"M");
+Context::set('mlayout_list', $mobile_layout_list);
+
+$mskin_list = $oModuleModel->getSkins($this->module_path, "m.skins");
+Context::set('mskin_list', $mskin_list);
+
+4. 관리자 정보 저장 기능 개선
+./svauth.admin.controller.php::procSvauthAdminInsertConfig() 코드 개선
+
+5. kcb_okname.plugin.php::processResult()에서 아래의 코드를
+if(count($check_output->data))
+{
+	$output->tpl = $oTemplate->compile($tpl_path, 'result_duplicated.html');
+	//return $this->setTemplateFile('none_free_di');
+}
+아래와 같이 변경
+if(count($check_output->data))
+	$output->tpl = $oTemplate->compile($tpl_path, 'result_duplicated.html');
+else
+{
+	Context::set('ret', $ret);
+	Context::set('retcode', $retcode);
+	$output->tpl = $oTemplate->compile($tpl_path, 'result.html');
+}
+
+5. IPIN 인증 메소드 삭제
+./svauth.view.php에서 아래의 코드 삭제
+/**
+ * @brief 아이핀 결과처리
+ **/
+public function dispSvauthIpinResult()
+{
+	//load config
+	$oModuleModel = &getModel('module');
+	$config = $oModuleModel->getModuleConfig('svauth');
+	
+	@$encPsnlInfo = $_POST["encPsnlInfo"];
+	@$WEBPUBKEY = trim($_POST["WEBPUBKEY"]);
+	@$WEBSIGNATURE = trim($_POST["WEBSIGNATURE"]);
+  
+	//make Keyfile for KCB server
+	$logpath = _XE_PATH_."../svauth/logs";
+	$exe = _XE_PATH_."../svauth/okname";
+	$keypath = _XE_PATH_."../svauth/okname.key";
+	$cpCode    = $config->shop_id;
+	$EndPointURL = "http://www.ok-name.co.kr/KcbWebService/OkNameService";
+	$cpubkey = $WEBPUBKEY;       //server publickey
+	$csig = $WEBSIGNATURE;    //server signature
+	$encdata = $encPsnlInfo;     //PERSONALINFO
+	$option = "SLU";
+		
+	//set CMD & run module
+	$cmd = "$exe $keypath $cpCode $EndPointURL $cpubkey $csig $encdata $logpath $option";
+	exec($cmd, $out, $ret);
+	
+	// 결과라인에서 값을 추출
+	foreach($out as $a => $b) { if($a < 13) { $field[$a] = $b; } }
+	
+	//세션에 저장
+	/*$_SESSION['auth_info']["auth_date"] =  date('Ymdhis');
+	$_SESSION['auth_info']["DI"] = $field[0]; //DI
+	$_SESSION['auth_info']["CI"] = $field[1]; //CI
+	$_SESSION['auth_info']["user_name"] = $field[6]; //성명
+	$_SESSION['auth_info']["birthday"] = $field[11]; //생년월일
+	$_SESSION['auth_info']["age"] = substr(date('Ymd')-$field[11],0,2); //만 나이
+	$_SESSION['auth_info']["sex"] = $field[9]; //성별
+	$_SESSION['auth_info']["forigen"] = $field[10]; //내외국인구분
+	$auth_info = $_SESSION['auth_info'];*/
+	
+	//만약 중복가입을 방지하고 있다면, DI조회후 결과값있는경우 다른페이지 set
+	if($config->free_di != "Y"){
+		$check_args->di = $auth_info['DI'];
+		$check_output = executeQueryArray('svauth.checkDi',$check_args);
+		if(count($check_output->data)) return $this->setTemplateFile('none_free_di');
+	}
+	//레이아웃과의 혹시나있을 에러를 방지하기위해 제거
+	Context::set('layout','none');
+	Context::set('auth_info',$auth_info);
+	Context::set('encPsnlInfo',$encPsnlInfo);
+	
+	$this->setTemplatePath($this->module_path."tpl/");
+	$this->setTemplateFile('ipin_result');
+}
+
+6. $_SESSION을 사용하지 않도록 개선
+모바일 브라우저에서는 popup 윈도우에서 생성한 $_SESSION은 부모 윈도우로 이동하지 않음
+./svauth.controller.php::addAuthLog() 추가
+./svauth.controller.php::getAuthLog() 추가
+./queries/checkDi.xml을 getDi.xml로 변경
+
+7. 실명인증을 사용하지 않으면 svauth 테이블에 레코드 추가되지 않음
+./svauth.controller.php::triggerInsertMemberAfter()에서 아래의 코드를
+$args->di = $aAuth["DI"];
+$args->ci = $aAuth["CI"];
+$args->auth_info = serialize($aAuth);
+$output = executeQuery('svauth.insertDi',$args);
+if (!$output->toBool()) 
+	return $output;
+
+아래와 같이 변경
+if( strlen( $aAuth["DI"] ) > 0 )
+{
+	$args->di = $aAuth["DI"];
+	$args->ci = $aAuth["CI"];
+	$args->auth_info = serialize($aAuth);
+	$output = executeQuery('svauth.insertDi',$args);
+
+	if (!$output->toBool()) 
+		return $output;
+}
+
+8. member.deleteMember trigger event 발생 시 호출되는 메소드명 수정
+triggerDeleteMember -> triggerDeleteMemberBefore
+
+v 0.2.7
+13th, Mar 2017
+1. SVCRM과 연동을 위해서 svauth 테이블에 인증된 개인정보를 직렬화 문자열이 아닌 필드로 입력함
+./schemas/svauth.log에서 아래의 코드를 
+<table name="svauth">
+    <column name="member_srl" type="number" size="11" notnull="notnull" index="primary_key" />	
+    <column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+    <column name="di" type="varchar" size="64" notnull="notnull" index="idx_di" />
+    <column name="auth_info" type="text" />
+</table>
+
+아래와 같이 변경
+<table name="svauth">
+	<column name="member_srl" type="number" size="11" notnull="notnull" index="primary_key" />	
+	<column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+	<column name="di" type="varchar" size="64" notnull="notnull" index="idx_di" />	
+	<column name="result_cd" type="varchar" size="10" notnull="notnull" />
+	<column name="result_msg" type="varchar" size="50" notnull="notnull" />
+	<column name="seqno" type="varchar" size="30" notnull="notnull" />
+	<column name="auth_date" type="varchar" size="20" notnull="notnull" />
+	<column name="user_name" type="varchar" size="10" notnull="notnull" />
+	<column name="birthday" type="char" size="10" notnull="notnull" />
+	<column name="gender" type="char" size="2" notnull="notnull" />
+	<column name="nationality" type="char" size="2" notnull="notnull" />
+	<column name="ISP" type="varchar" size="10" notnull="notnull" />
+	<column name="mobile" type="char" size="12" notnull="notnull" />
+</table>
+
+./svauth.controller.php::triggerInsertMemberAfter()에서 아래의 코드를
+$args->di = $aAuth["DI"];
+$args->ci = $aAuth["CI"];
+$args->auth_info = serialize($aAuth);
+$output = executeQuery('svauth.insertAuth',$args);
+
+아래와 같이 변경
+$args->di = $aAuth["DI"];
+$args->ci = $aAuth["CI"];
+$args->result_cd = $aAuth["resultCd"]; 
+$args->result_msg = $aAuth["resultMsg"]; 
+$args->seqno = $aAuth["hsCertSvcTxSeqno"]; 
+$args->auth_date = $aAuth["auth_date"]; 
+$args->user_name = $aAuth["user_name"]; 
+$args->birthday = $aAuth["birthday"]; 
+$args->gender = $aAuth["gender"];
+$args->nationality = $aAuth["nationality"];
+$args->ISP = $aAuth["ISP"];
+$args->mobile = $aAuth["mobile"];
+$output = executeQuery('svauth.insertAuth',$args);
+
+2. 동일 인증 기록 조회 메소드를 개별 플러그인에서 svauth.model.php로 통합
+./queries/getDi.xml을 getLog.xml로 변경
+./plugins/kcb_okname/kcb_okname.plugin.php::processResult()에서 아래의 코드를
+$check_args->di = $result[4];//$_SESSION['auth_info']["DI"];
+$check_output = executeQueryArray('svauth.getDi',$check_args);
+if(count($check_output->data))
+	return $oTemplate->compile($tpl_path, 'result_duplicated.html');
+아래와 같이 변경
+$oSvauthModel = getModel('svauth');
+$aRst = $oSvauthModel->getAuthLog($result[4]);
+
+if( count( $aRst ) )
+	return $oTemplate->compile($tpl_path, 'result_duplicated.html');
+
+v 0.2.8
+19th, Mar 2017
+1. member_srl을 기준으로 실명 인증 정보를 가져오는 메소드 추가
+./svauth.model.php::getMemberAuthInfo()를 추가
+
+v 0.2.9
+16th, Apr 2017
+1. 실명인증 내역을 비활성화시키고 회원탈퇴시키는 기능 추가
+./svauth.admin.view.php::dispSvauthAdminManageAuthList() 추가
+./tpl/auth_list.html 추가
+./queries/getAuthList.xml 추가
+./svauth.admin.view.php::dispSvauthAdminDeleteAuth() 추가
+./tpl/auth_delete.html 추가
+./svauth.admin.controller.php::procSvauthAdminDeleteAuth() 추가
+./queries/deleteAuthByMemberSrl.xml 추가
+./queries/deleteAuthLogByCiByDi.xml 추가
+
+2. 같은 시행 다른 이름 쿼리 통합
+./svauth.controller.php::triggerDeleteMemberBefore()에서 아래의 코드를
+$output = executeQuery('svauth.deleteDi',$args);
+아래와 같이 변경
+$output = executeQuery('svauth.deleteAuthByMemberSrl',$args);
+./queries/deleteDi.xml 비활성화
+
+v 0.3.0
+18th, May 2017
+1. 회원별 실명인증 정보를 조회하는 기능 추가
+./svauth.admin.model.php::getMemberAuthInfo() 추가
+./queries/getAdminMemberAuthCheck.xml 추가
+
+2. 회원별 실명인증 여부를 조회하는 기능 추가
+./svauth.admin.model.php::getMemberAuthCheck() 추가
+./queries/getAdminMemberAuthCheck.xml 추가
+
+3. 개인정보 접근 권한에 따라 정보 차단하는 기능 추가
+./svauth.admin.model.php::_translatePrivacy() 추가
+
+v 0.3.1
+7th, Jun 2017
+1. KCB activeX 오류 개선; 생년월일을 YYMMDD로 입력하고 액티브엑스 호출하면 다운됨
+./plugins/kcb_okname/tpl/js/script.js에 아래의 코드 추가
+if( form1.birthday.value.length != 8 )
+{
+	alert("생년월일은 YYYYMMDD 형식으로 입력해주세요");
+	return;
+}
+
+v 0.3.2
+21st, Jun 2017
+1. 실명 인증 후 회원 가입하고 스스로 탈퇴하면 인증 로그가 삭제되지 않아서 회원가입안되는 문제 대응
+./svauth.admin.view.php::dispSvauthAdminManageAuthList()를 dispSvauthAdminManageAuthMemberList()로 변경
+./svauth.admin.view.php::dispSvauthAdminManageAuthList() 용도 변경
+./queries/getAuthLogList.xml 추가
+
+./svauth.admin.view.php::dispSvauthAdminDeleteAuth()를 dispSvauthAdminDeleteAuthByMemberSrl()로 변경
+./tpl/auth_list.html를 auth_member_list.html로 변경
+
+./svauth.admin.controller.php::procSvauthAdminDeleteAuth()을 procSvauthAdminDeleteAuthByMemberSrl()로 변경
+
+./svauth.admin.view.php::dispSvauthAdminDeleteAuthLog() 추가
+./queries/getAuthInfoByAuthLog.xml 추가
+./tpl/auth_log_delete.html 추가
+./svauth.admin.controller.php::procSvauthAdminDeleteAuthByAuthLog() 추가
+
+2. auth_log에 srl 필드 추가
+./schemas/svauth_log.xml에서 아래의 코드를
+<table name="svauth_log">
+    <column name="di" type="varchar" size="64" notnull="notnull" primary_key="primary_key"  />
+    <column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+    <column name="auth_info" type="text" />
+</table>
+아래와 같이 변경
+<table name="svauth_log">
+    <column name="auth_log_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+    <column name="di" type="varchar" size="64" notnull="notnull" index="idx_di"  />
+    <column name="ci" type="varchar" size="88" notnull="notnull" index="idx_ci" />
+    <column name="auth_info" type="text" />
+</table>
+
+./svauth.model.php::getNextAuthLogSrl() 추가
+./queries/getMaxAuthLogSrl.xml 추가
+
+./svauth.controller.php::addAuthLog()에 아래의 코드 추가
+$oSvauthModel = &getModel('svauth');
+$nAuthLogSrl = $oSvauthModel->getNextAuthLogSrl();
+$args->auth_log_srl = $nAuthLogSrl;
+
+./queries/insertAuthLog.xml에 아래의 코드 추가
+<column name="auth_log_srl" var="auth_log_srl" notnull="notnull"/>
+
+v 0.3.3
+5th, Aug 2017
+1. 자기 보유 핸드폰 SMS 인증 플러그인 추가
+./plugins/sv_sms 추가
+./svauth.controller.php::procSvauthSetAuthCode() 추가
+./svauth.controller.php::procSvauthValidateAuthCode() 추가
+./schemas/svauth_sms_log.xml 추가
+./queries/insertSmsAuth.xml 추가
+./queries/getSmsAuthCountByClue.xml 추가
+./queries/getTryCountByClue.xml 추가
+./queries/getSmsAuth.xml 추가
+./queries/updateSmsAuth.xml 추가
+
+2. 비사용 코드 제거
+./svauth.controller.php::triggerInsertMemberBefore()에서 아래의 코드 제거
+$member_srl = $obj->member_srl;
+$oModuleModel = &getModel('module');
+$config = $oModuleModel->getModuleConfig('svauth');
+
+3. 진행 중 인증 내역 확인 방법 변경
+./svauth.model.php::getAuthLog()에서 아래의 코드를
+$args->di = $sAuthClue;
+$output = executeQuery('svauth.getLog', $args);
+if(!$output->data) 
+	return null;
+
+if( strlen( $output->data->di ) > 0 )
+	return unserialize( $output->data->auth_info);
+else
+	return null;
+
+아래와 같이 변경
+$oModuleModel = &getModel('module');
+$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
+
+$nPluginSrl = $oModuleConfig->plugin_srl;
+if (!$nPluginSrl) 
+	return new Object(-1, 'no plugin_srl');
+
+$oSvauthModel = &getModel('svauth');
+$oPlugin = $oSvauthModel->getPlugin($nPluginSrl);
+$sAuthPluginType = trim($oPlugin->_g_oPluginInfo->plugin);
+switch( $sAuthPluginType )
+{
+	case 'sv_sms':
+		$output = $oPlugin->checkValidAuthLog($sAuthClue);
+		if( strlen( $output ) > 0 )
+			return $output;
+		else
+			return null;
+		break;
+	case 'kcb_okname':
+		$args->di = $sAuthClue;
+		$output = executeQuery('svauth.getLog', $args);
+		if(!$output->data) 
+			return null;
+
+		if( strlen( $output->data->di ) > 0 )
+			return unserialize( $output->data->auth_info);
+		else
+			return null;
+		break;
+	default:
+		echo 'invalid auth plugin';
+		return;
+}
+
+v 0.3.4
+8th, Aug 2017
+1. svdocs.controller.php::procSvdocsSetAuthCode()와 연동
+./svauth.controller.php::procSvauthSetAuthCode()에 아래의 코드 추가
+return new Object(0, '인증번호를 발송하였습니다.');
+
+2. svdocs.controller.php::procSvdocsRegistration()와 연동
+./svauth.controller.php::procSvauthValidateAuthCode()에서 아래의 코드 제거
+if(!$output->toBool()) 
+
+v 0.3.5
+11th, Aug 2017
+1. sms auth 플러그인에 SMS인증 약관 항목 추가
+./plugins/sv_sms/info.xml에 아래의 코드 추가
+<var name="sms_auth_agreement" type="textarea">
+	<title xml:lang="ko">SMS인증 약관</title>
+	<description xml:lang="ko">SMS 인증 약관을 입력합니다.</description>
+</var>
+
+v 0.3.6
+16th, Aug 2017
+1. 기본 svauth plugin이 선택되지 않으면 intercept 중단
+./svauth.controller.php::triggerInsertMemberBefore()에 아래의 코드 추가
+if(!(int)$config->plugin_srl )
+	return new Object();
+
+v 0.3.7
+25th, Aug 2017
+1. sms svauth plugin에서 인증 핸드폰 번호와 인증 요청 모듈 srl을 동시 기록으로 변경
+
+./svauth.controller.php::procSvauthSetAuthCode()에 아래의 코드 추가
+if (!$nRequestModuleSrl) 
+	return new Object(-1, 'msg_invalid_module_srl');
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에 아래의 코드 추가
+if(!$nRequestModuleSrl)
+	return new Object(-1, 'msg_invalid_module_srl');
+
+./schemas/svauth_sms_log.xml에 아래의 코드 추가
+<column name="module_srl" type="number" size="11" notnull="notnull" index="idx_clue" />
+
+./queries/getSmsAuthCountByClue.xml에 아래의 코드 추가
+<condition operation="equal" column="module_srl" var="module_srl" notnull="notnull" default="0" pipe="and" />
+
+./queries/getTryCountByClue.xml에 아래의 코드 추가
+<condition operation="equal" column="module_srl" var="module_srl" notnull="notnull" default="0" pipe="and" />
+
+./plugins/sv_sms/sv_sms.plugin.php::processResult()에 아래의 코드 추가
+$nModuleSrl = (int)Context::get('module_srl');
+if( !$nModuleSrl )
+	return new Object(-1, 'msg_invalid_module_srl');
+
+v 0.3.8
+1st, Sep 2017
+1. 기본 svauth plugin이 선택되지 않으면 intercept 중단
+./svauth.controller.php::triggerInsertMemberAfter()에 아래의 코드 추가
+if (!$aAuth->toBool())
+	return new Object();
+
+v 0.3.9
+5th, Sep 2017
+1. 관리자에서 중복 인증 허용 설정이 명시적으로 안되있으면 중복가입 허용안함으로 표시되는 문제 개선
+./tpl/setting.html에서 아래의 코드를
+<div class="x_control-group">
+	<label class="x_control-label" for="free_di">{$lang->free_di}</label>
+	<div class="x_controls">
+		<select name="free_di" id="free_di">
+			<option value="N" selected="selected"|cond="$config->free_di == 'N' || !$config->free_di">중복가입 허용안함</option>
+			<option value="Y" selected="selected"|cond="$config->free_di == 'Y'">중복가입 허용</option>
+		</select>
+		<a href="#free_di_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+		<p id="free_di_help" class="x_help-block" hidden>{$lang->about_free_di}</p>
+	</div>
+</div>
+아래와 같이 변경
+<div class="x_control-group">
+	<label class="x_control-label" for="free_di">{$lang->free_di}</label>
+	<div class="x_controls">
+		<select name="free_di" id="free_di">
+			<option value="N" selected="selected"|cond="$config->free_di == 'N'">중복가입 허용안함</option>
+			<option value="Y" selected="selected"|cond="$config->free_di != 'N'">중복가입 허용</option>
+		</select>
+		<a href="#free_di_help" class="x_icon-question-sign" data-toggle>{$lang->help}</a>
+		<p id="free_di_help" class="x_help-block" hidden>{$lang->about_free_di}</p>
+	</div>
+</div>
+
+2. svauth 모듈이 member module을 intercept 하는 방식 개선
+./svauth.model.php::getAuthLog()에서 아래의 코드를
+$nPluginSrl = $oModuleConfig->plugin_srl;
+if (!$nPluginSrl) 
+	return new Object(-1, 'no_plugin_srl');
+
+아래와 같이 변경
+$nPluginSrl = $oModuleConfig->plugin_srl;
+if (!$nPluginSrl) 
+	return null;
+
+./svauth.controller.php::triggerInsertMemberAfter()에서 아래의 코드를
+$aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
+if (!$aAuth->toBool())
+	return new Object();
+
+if( strlen( $aAuth["DI"] ) > 0 )
+{
+	$args->di = $aAuth["DI"];
+	$args->ci = $aAuth["CI"];
+	$args->result_cd = $aAuth["resultCd"]; 
+	$args->result_msg = $aAuth["resultMsg"]; 
+	$args->seqno = $aAuth["hsCertSvcTxSeqno"]; 
+	$args->auth_date = $aAuth["auth_date"]; 
+	$args->user_name = $aAuth["user_name"]; 
+	$args->birthday = $aAuth["birthday"]; 
+	$args->gender = $aAuth["gender"];
+	$args->nationality = $aAuth["nationality"];
+	$args->ISP = $aAuth["ISP"];
+	$args->mobile = $aAuth["mobile"];
+	$output = executeQuery('svauth.insertAuth',$args);
+
+	if (!$output->toBool()) 
+		return $output;
+}
+
+아래와 같이 변경
+$aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
+if( is_array( $aAuth )
+{
+	if( strlen( $aAuth["DI"] ) > 0 )
+	{
+		$args->di = $aAuth["DI"];
+		$args->ci = $aAuth["CI"];
+		$args->result_cd = $aAuth["resultCd"]; 
+		$args->result_msg = $aAuth["resultMsg"]; 
+		$args->seqno = $aAuth["hsCertSvcTxSeqno"]; 
+		$args->auth_date = $aAuth["auth_date"]; 
+		$args->user_name = $aAuth["user_name"]; 
+		$args->birthday = $aAuth["birthday"]; 
+		$args->gender = $aAuth["gender"];
+		$args->nationality = $aAuth["nationality"];
+		$args->ISP = $aAuth["ISP"];
+		$args->mobile = $aAuth["mobile"];
+		$output = executeQuery('svauth.insertAuth',$args);
+
+		if (!$output->toBool()) 
+			return $output;
+	}
+}
+
+v 0.4.0
+29th, Sep 2017
+1. 동일 IP에서 반복 응모 제한 기능 추가
+./plugins/sv_sms/sv_sms.cookie.php::svauthSmsCookie()에서 아래의 코드를
+$this->_g_sSvauthCookieName = 'svauth_restriction_'.$nPluginSrl;
+아래와 같이 변경
+$this->_g_sSvauthSmsCookieName = 'svauth_restriction_'.$nPluginSrl;
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에 아래의 코드를 추가
+$oPluginInfo = $this->_g_oPluginInfo;
+require_once(_XE_PATH_.'modules/svauth/plugins/sv_sms/sv_sms.cookie.php');
+$oCookie = new svauthSmsCookie( $oPluginInfo->plugin_srl );
+if( (int)$oPluginInfo->duplicate_restriction_sec )
+{
+	if( $oCookie->isRestricted() )
+	{
+		$oCookie->setRestricted( (int)$oPluginInfo->duplicate_restriction_sec );
+		return new Object(-1, 'msg_already_registered');
+	}
+}
+
+./queries/getTryCountByIp.xml 추가
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에 아래의 코드를 추가
+$args->module_srl = $nRequestModuleSrl;
+$args->ipaddress = $_SERVER['REMOTE_ADDR'];
+$args->regdate = date("Ymd", mktime(0,0,0,date("m"),date("d"),date("Y")));
+$output = executeQuery('svauth.getTryCountByIp', $args);
+if (!$output->toBool()) 
+	return $output;
+unset($args);
+
+if( $oPluginInfo->day_try_limit )
+{
+	if($output->data->count > $oPluginInfo->day_try_limit)
+		return new Object(-1, '잦은 인증번호 요청으로 금지되셨습니다. 내일 다시 시도해주십시오.');
+}
+
+// check day try limit
+$args->module_srl = $nRequestModuleSrl;
+$args->ipaddress = $_SERVER['REMOTE_ADDR'];
+$args->regdate = date('YmdHis', time()-$oPluginInfo->duplicate_restriction_sec);
+$output = executeQuery('svauth.getTryCountByIp', $args);
+if (!$output->toBool())
+	return $output;
+
+if($output->data->count > 0)
+	return new Object(-1, $oPluginInfo->duplicate_restriction_sec . '초 후에 다시 시도해 주세요.');
+
+v 0.4.1
+24th, Oct 2017
+1. 실명인증 환경에 대비하여 회원이 자발적으로 탈퇴하면 탈퇴한 회원정보를 백업
+./schemas/svauth.xml에 아래의 코드 추가
+<column name="is_deleted" type="char" size="1" default="N" />
+
+./queries/deleteAuthByMemberSrl.xml()에서 아래의 코드를
+<query id="deleteAuthByMemberSrl" action="delete">
+	<tables>
+		<table name="svauth" />
+	</tables>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
+	</conditions>
+</query>
+
+아래와 같이 변경
+<query id="deleteAuthByMemberSrl" action="update">
+	<tables>
+		<table name="svauth" />
+	</tables>
+	<columns>
+        <column name="is_deleted" var="is_deleted" />
+    </columns>
+	<conditions>
+		<condition operation="equal" column="member_srl" var="member_srl" filter="number" notnull="notnull" />
+	</conditions>
+</query>
+
+./svauth.controller.php::triggerDeleteMemberBefore()에 아래의 코드를 추가
+$args->is_deleted = 'Y';
+
+./svauth.admin.controller.php::procSvauthAdminDeleteAuthByMemberSrl()에 아래의 코드를 추가
+$args->is_deleted = 'N';
+$args->is_deleted = 'Y';
+
+./svauth.admin.model.php::getMemberAuthCheck()에 아래의 코드를 추가
+$args->is_deleted = 'N';
+
+./queries/getAdminMemberAuthCheck.xml()에서 아래의 코드 추가
+<condition operation="equal" column="is_deleted" var="is_deleted" notnull="notnull" default="N" pipe="and" />
+
+./svauth.admin.model.php::getMemberAuthInfo()에 아래의 코드를 추가
+$args->is_deleted = 'N';
+
+./queries/getAdminMemberAuthInfo.xml()에서 아래의 코드 추가
+<condition operation="equal" column="is_deleted" var="is_deleted" notnull="notnull" default="N" pipe="and" />
+
+./tpl/auth_member_list.html에 아래의 코드 추가
+<th scope="col">{$lang->is_deleted}</th>
+<td>{$val->is_deleted}</td>
+
+./svauth.admin.model.php::dispSvauthAdminDeleteAuthByMemberSrl()에 아래의 코드를 추가
+$args->is_deleted = 'N';
+
+./svauth.model.php::getMemberAuthInfo()에 아래의 코드를 추가
+$args->is_deleted = 'N';
+
+v 0.4.2
+28th, Oct 2017
+1. sms 인증 플러그인에서 [중복응모제한초]가 60초 이상이면 [분]으로, 60분 이상이면 [시간]으로 경고 표시
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에서 아래의 코드를
+if($output->data->count > 0)
+	return new Object(-1, $oPluginInfo->duplicate_restriction_sec . '초 후에 다시 시도해 주세요.');
+아래와 같이 변경
+if($output->data->count > 0)
+{
+	$nRestrictionSec = $oPluginInfo->duplicate_restriction_sec;
+	if( $nRestrictionSec > 3600 )
+		$sWarning = ceil($nRestrictionSec/3600).'시간 후에 다시 시도해 주세요.';
+	else if( $nRestrictionSec > 60 )
+		$sWarning = ceil($nRestrictionSec/60).'분 후에 다시 시도해 주세요.';
+	else
+		$sWarning = $nRestrictionSec.'초 후에 다시 시도해 주세요.';
+	return new Object(-1,$sWarning);
+}
+
+2. sms 인증 플러그인에서 [인증번호 재전송 제한] 설정 변수명 변경
+./plugins/sv_sms/info.xml에서 아래의 코드를
+<var name="authcode_time_limit" type="text">
+아래와 같이 변경
+<var name="authcode_delay_sec" type="text">
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에서 아래의 코드를
+$args->regdate = date('YmdHis', time()-$oPluginInfo->authcode_time_limit);
+$output = executeQuery('svauth.getTryCountByClue', $args);
+
+if (!$output->toBool())
+	return $output;
+unset($args);
+if($output->data->count > 0)
+	return new Object(-1, $oPluginInfo->authcode_time_limit . '초 동안 다시 받으실 수 없습니다.');
+아래와 같이 변경
+$args->regdate = date('YmdHis', time()-$oPluginInfo->authcode_delay_sec);
+$output = executeQuery('svauth.getTryCountByClue', $args);
+
+if (!$output->toBool())
+	return $output;
+unset($args);
+if($output->data->count > 0)
+	return new Object(-1, $oPluginInfo->authcode_delay_sec . '초 동안 다시 받으실 수 없습니다.');
+
+3. 차단된 SMS 인증 시도를 기록함
+./plugins/sv_sms/sv_sms.plugin.php::_recordDeniedApproach() 추가
+
+v 0.4.3
+16th, May 2018
+1. SMS로 핸드폰 소유 인증 내역 화면 표시
+./conf/module.xml에 아래의 코드 추가
+<action name="dispSvauthAdminManageSmsAuthList" type="view" />
+
+./svauth.admin.view.php::dispSvauthAdminManageSmsAuthList() 추가
+
+./tpl/_header.html에 아래의 코드 추가
+<li class="x_active"|cond="$act == 'dispSvauthAdminManageSmsAuthList'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminManageSmsAuthList')}">{$lang->cmd_auth_sms_log_list_manage}</a></li>
+
+./queries/getSmsAuthLogList.xml 추가
+./tpl/sms_auth_log_list.html 추가
+
+v 0.4.4
+23rd, Jul 2018
+1. 실명인증 시도 직후 회원가입 완료하지 않은 사람이 재시도할 때 혼란 방지
+./plugins/kcb_okname/tpl/result_duplicated.html에서 아래의 코드를
+이미 가입된 아이디가 있습니다.
+
+아래와 같이 변경
+이미 실명 인증 받으신 내역이 있습니다.
+
+
+v 0.4.5
+12th, Sep 2018
+1. 게시판에서 직접 인증 플러그인 호출 기능 추가
+./svauth.controller.php::procSvauthSetAuthCode() 에서 아래의 코드를
+if(!$nRequestModuleSrl)
+	return new Object(-1, 'msg_invalid_module_srl');
+
+아래와 같이 변경
+if(!$nRequestModuleSrl)
+{
+	$nAjaxModuleSrl = (int)Context::get('module_srl');
+	if( !$nAjaxModuleSrl )
+		return new Object(-1, 'msg_invalid_1module_srl');
+	else
+		$nRequestModuleSrl = $nAjaxModuleSrl;
+}
+
+./tpl/_header.html에 아래의 코드 추가
+<li class="x_active"|cond="$act=='dispSvauthAdminBoardConnect'"><a href="{getUrl('','module',$module,'act','dispSvauthAdminBoardConnect')}">{$lang->cmd_board_connect}</a></li>
+
+./svauth.admin.view.php::dispSvauthAdminBoardConnect() 추가
+
+./tpl/board_connect_list.html 추가
+
+./svauth.admin.controller.php::procSvauthAdminUpdateBoardConnect() 추가
+
+./svauth.class.php::checkUpdate() 에 아래의 코드 추가
+if(!$oModuleModel->getTrigger('document.insertDocument', 'svauth', 'controller', 'triggerInsertDocument', 'before'))
+	return true;
+
+./svauth.class.php::moduleUpdate() 에 아래의 코드 추가
+$oModuleController->insertTrigger('document.insertDocument', 'svauth', 'controller', 'triggerInsertDocument', 'before');
+
+./svauth.controller.php::triggerInsertDocument() 추가
+
+2. 코드 오류 수정
+./svauth.admin.model.php::getPluginList()에 아래의 코드 추가
+$args->page = Context::get('page');
+
+3. 코드 refactoring
+./svauth.admin.view.php::dispSvauthAdminPluginList()에서 아래의 코드를
+$args->page = Context::get('page');
+$output = executeQueryArray('svauth.getPluginList', $args);
+if (!$output->toBool()) 
+	return $output;
+
+아래와 같이 변경
+$oSvauthAdminModel = &getAdminModel('svauth');
+$aPluginList = $oSvauthAdminModel->getPluginList();
+
+./svauth.admin.controller.php::_saveModuleConfig() 추가
+
+./svauth.admin.controller.php::procSvauthAdminInsertConfig()에서 아래의 코드를
+$oModuleController = &getController('module');
+$oModuleModel = &getModel('module');
+unset($args->act,$args->error_return_url);
+$config = $oModuleModel->getModuleConfig('svauth');
+
+foreach($args as $k => $v) 
+	$config->{$k} = $v;
+$output = $oModuleController->insertModuleConfig('svauth',$config);
+
+아래와 같이 변경
+$output = $this->_saveModuleConfig($args);
+
+v 0.4.6
+28th, Oct 2018
+1. SMS 핸드폰 소유인증 내역 지우기 기능 추가
+./tpl/sms_auth_log_list.html에서 아래의 코드를 
+<td><input type="checkbox" name="cart" value="{$val->sms_auth_srl}" /></td>
+아래와 같이 변경
+<td><input type="checkbox" name="cart" value="{$val->sms_auth_srl}" data-clue="{$val->clue}" data-authcode="{$val->authcode}" /></td>
+
+./tpl/sms_auth_log_list.html에 아래의 코드 추가
+<span class="x_pull-right x_btn-group">
+	<a class="x_btn modalAnchor _manage_selected" href="#listManager">{$lang->delete}</a>
+</span>
+
+<section class="x_modal" id="listManager">
+	<form action="./" method="post">
+	<input type="hidden" name="module" value="svauth" />
+	<input type="hidden" name="act" value="procSvauthAdminDeleteSmsAuth" />
+	<input type="hidden" name="success_return_url" value="{getUrl('act', $act)}" />
+		<div class="x_modal-header">
+			<h1>{$lang->cmd_selected_sms_auth_manage}: <span class="_sub"></span></h1>
+		</div>
+		<div class="x_modal-body">
+			<table class="x_table x_table-striped x_table-hover">
+				<thead>
+					<tr>
+						<th scope="col">{$lang->auth_mobile_no}</th>
+						<th scope="col" class="text">{$lang->auth_code}</th>
+					</tr>
+				</thead>
+				<tbody id="popupBody">
+				</tbody>
+			</table>
+		</div>
+		<div class="x_modal-footer">
+			<button type="button" class="x_btn x_pull-left" data-hide="#listManager">{$lang->cmd_close}</button>
+			<span class="x_btn-group x_pull-right">
+				<button type="submit" class="x_btn x_btn-inverse">{$lang->delete}</button>
+			</span>
+		</div>
+	</form>
+</section>
+
+<script>
+jQuery(function($){
+	// Modal anchor activation
+	var $authSmsTable = $('#authSmsList');
+	$authSmsTable.find(':checkbox').change(function(){
+		var $modalAnchor = $('a.modalAnchor._manage_selected');
+		if($authSmsTable.find('tbody :checked').length == 0){
+			$modalAnchor.removeAttr('href').addClass('x_disabled');
+		} else {
+			$modalAnchor.attr('href','#listManager').removeClass('x_disabled');
+		}
+	}).change();
+	
+
+	$('a.modalAnchor._manage_selected').bind('before-open.mw', function(){
+		var $authSmsTable = $('#authSmsList tbody :checked');
+		if ($authSmsTable.length == 0){
+			alert('{$lang->not_selected}');
+			return false;
+		}
+		$('#popupBody').empty();
+		for (var i = 0; i<$authSmsTable.length; i++){
+			sSmsAuthSrl = $authSmsTable.eq(i).val();
+			sClue = $authSmsTable.eq(i).attr('data-clue');
+			sAuthcode = $authSmsTable.eq(i).attr('data-authcode');
+
+			$tr = $('<tr><td>'+sClue+'</td><td>'+sAuthcode+'</td><input type="hidden" name="sms_auth_srls[]" value="'+sSmsAuthSrl+'"/></tr>');
+		
+			$('#popupBody').append($tr);
+		}
+	});
+});
+</script>
+
+./queries/deleteSmsAuthByAuthSrl.xml 추가
+./svauth.admin.controller.php::procSvauthAdminDeleteSmsAuth() 추가
+
+v 0.4.7
+29th, Oct 2018
+1. SMS 핸드폰 소유인증 금지 국번 입력 기능 추가
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에 아래의 코드 추가
+$asExchangeNo = explode(',', $oPluginInfo->forbid_exchange_no);
+foreach( $asExchangeNo as $key => $val )
+{
+	if (strpos($phonenum,  $val) === 0) 
+		return new Object(-1, '인증이 금지된 국번입니다.');
+}
+
+2. 이미 SMS 핸드폰 소유 인증받은 번호로 재시도하면
+1차에서는 이미 인증받은 번호 오류 처리되지만
+그 시도의 로그가 passed = N으로 기록되어서
+또 다시 동일 번호로 인증 요청하면 이를 수락하는 오류 수정
+
+.//plugins/sv_sms/sv_sms.plugin.php에서 아래의 코드를
+private function _recordDeniedApproach($nRequestModuleSrl, $sPhonenum, $sErrCode )
+{
+	$args->country_code = 82;
+	$args->module_srl = $nRequestModuleSrl;
+	$args->clue = $sPhonenum;
+	$args->authcode = $sErrCode;
+	$args->passed = 'Y';
+	$args->is_valid = 'N';
+	$args->ipaddress = $_SERVER['REMOTE_ADDR'];
+	$output = executeQuery('svauth.insertSmsAuth', $args);
+}
+
+아래와 같이 변경
+private function _recordDeniedApproach($nRequestModuleSrl, $sPhonenum, $sErrCode, $sPassedOption='N')
+{
+	$args->country_code = 82;
+	$args->module_srl = $nRequestModuleSrl;
+	$args->clue = $sPhonenum;
+	$args->authcode = $sErrCode;
+	$args->passed = $sPassedOption; //'Y';
+	$args->is_valid = 'N';
+	$args->ipaddress = $_SERVER['REMOTE_ADDR'];
+	$output = executeQuery('svauth.insertSmsAuth', $args);
+}
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에서 아래의 코드를
+$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err2' );
+아래와 같이 변경
+$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err2', 'Y');
+
+v 0.4.8
+18th, Jun 2018
+1. KCB okcert3 플러그인 추가
+./plugins/kcb_okcert3/ 추가
+
+./svauth.admin.view.php::dispSvauthAdminUpdatePlugin()에서 아래의 코드를
+if( $oPluginInfo->title == 'KCB OkName 플러그인' )
+{
+	if( !function_exists('okname') )
+	{
+		Context::set('plugin_title', 'kcb_okname');
+		$sPluginSkin = 'kcb_plugin_not_installed';
+	}
+}
+
+아래와 같이 변경
+if( $oPluginInfo->title == 'KCB okcert3 플러그인' )
+{
+	if( !function_exists('okcert3_u') || !function_exists('okcert3') )
+	{
+		Context::set('plugin_title', 'kcb_okcert3');
+		$sPluginSkin = 'kcb_plugin_not_installed';
+	}
+}
+else if( $oPluginInfo->title == 'KCB OkName 플러그인' )
+{
+	if( !function_exists('okname') )
+	{
+		Context::set('plugin_title', 'kcb_okname');
+		$sPluginSkin = 'kcb_plugin_not_installed';
+	}
+}
+
+./tpl/kcb_plugin_not_installed.html에서 아래의 코드를
+KCB okname의 필수 구성요소가 설치되지 않았습니다.<BR>
+
+아래와 같이 변경
+{$plugin_title}의 필수 구성요소가 설치되지 않았습니다.<BR>
+
+./tpl/updateplugin.html에 아래의 코드 추가
+<!--@elseif($var->type=="file")-->
+	<!--@if($var->value)-->
+	  <div>{$var->value}</div>
+	  <input type="checkbox" name="del_{$name}" value="Y" id="del_{$name}" class="checkbox" />
+	  <label for="del_{$name}">{$lang->cmd_delete}</label>
+	<!--@end-->
+	<input type="file" name="{$name}" value="" />
+
+./svauth.admin.controller.php::procSvauthAdminUpdatePlugin()에서 아래의 코드를
+if($vars->type!='image') 
+	continue;
+
+$image_obj = $extra_vars->{$name};
+$extra_vars->{$name} = $oPluginInfo->extra_var->{$name}->value;
+
+// 삭제 요청에 대한 변수를 구함
+$del_var = $extra_vars->{"del_".$name};
+unset($extra_vars->{"del_".$name});
+// 삭제 요청이 있거나, 새로운 파일이 업로드 되면, 기존 파일 삭제
+if($del_var == 'Y' || $image_obj['tmp_name']) 
+{
+	FileHandler::removeFile($extra_vars->{$name});
+	$extra_vars->{$name} = '';
+	if($del_var == 'Y' && !$image_obj['tmp_name']) 
+		continue;
+}
+
+// 정상적으로 업로드된 파일이 아니면 무시
+if(!$image_obj['tmp_name'] || !is_uploaded_file($image_obj['tmp_name'])) 
+	continue;
+
+// 이미지 파일이 아니어도 무시 (swf는 패스~)
+if(!preg_match("/\.(jpg|jpeg|gif|png|swf|enc|pem)$/i", $image_obj['name'])) 
+	continue;
+
+// 경로를 정해서 업로드
+if ($vars->location)
+{
+	$location = $this->mergeKeywords($vars->location,$extra_vars);
+	$path = sprintf("./files/svauth/%s/%s/",$args->plugin_srl,$location);
+}
+else
+	$path = sprintf("./files/attach/images/%s/", $args->plugin_srl);
+
+// 디렉토리 생성
+if(!FileHandler::makeDir($path))
+	continue;
+
+$filename = $path.$image_obj['name'];
+
+// 파일 이동
+if(!move_uploaded_file($image_obj['tmp_name'], $filename))
+	continue;
+
+$extra_vars->{$name} = $filename;
+
+아래와 같이 변경
+if($vars->type=='file' || $vars->type=='image')
+{
+	$image_obj = $extra_vars->{$name};
+	$extra_vars->{$name} = $oPluginInfo->extra_var->{$name}->value;
+
+	// 삭제 요청에 대한 변수를 구함
+	$del_var = $extra_vars->{"del_".$name};
+	unset($extra_vars->{"del_".$name});
+	// 삭제 요청이 있거나, 새로운 파일이 업로드 되면, 기존 파일 삭제
+	if($del_var == 'Y' || $image_obj['tmp_name']) 
+	{
+		FileHandler::removeFile($extra_vars->{$name});
+		$extra_vars->{$name} = '';
+		if($del_var == 'Y' && !$image_obj['tmp_name']) 
+			continue;
+	}
+
+	// 정상적으로 업로드된 파일이 아니면 무시
+	if(!$image_obj['tmp_name'] || !is_uploaded_file($image_obj['tmp_name'])) 
+		continue;
+
+	// 이미지 파일이면 확장자 검사
+	if ( $vars->type=='image' )
+	{
+		if(!preg_match("/\.(jpg|jpeg|gif|png|swf|enc|pem)$/i", $image_obj['name'])) 
+			continue;
+	}
+	else if ( $vars->type=='file' ) // 일반 파일이면 kcb okcert 라이센스 파일인 dat 확장자만 허용
+	{
+		if(!preg_match("/\.(dat)$/i", $image_obj['name'])) 
+			continue;
+	}
+
+	// 경로를 정해서 업로드
+	if ( $vars->type=='file' )
+	{
+		$path = sprintf("./files/svauth/%s/",$args->plugin_srl);
+		$sWebserverRoot = str_replace('/modules/svauth/svauth.admin.controller.php', '', realpath(__FILE__)); 
+		$sFileAbsPath = $sWebserverRoot.'/files/svauth/'.$args->plugin_srl.'/';
+	}
+	elseif ( $vars->type=='image' )
+		$path = sprintf("./files/attach/images/%s/", $args->plugin_srl);
+
+	// 디렉토리 생성
+	if(!FileHandler::makeDir($path))
+		continue;
+
+	$filename = $path.$image_obj['name'];
+
+	// 파일 이동
+	if(!move_uploaded_file($image_obj['tmp_name'], $filename))
+		continue;
+
+	// 경로를 정해서 업로드
+	if ( $vars->type=='file' )
+		$extra_vars->{$name} = $sFileAbsPath.$image_obj['name'];
+	elseif ( $vars->type=='image' )
+		$extra_vars->{$name} = $filename;
+}
+
+./svauth.view.php::dispSvauthResult()에서 아래의 코드를
+$sForm = $oPlugin->processResult();
+
+아래와 같이 변경
+$oModuleModel = &getModel('module');
+$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
+$sForm = $oPlugin->processResult($oModuleConfig);
+
+./svauth.model.php::getAuthLog()에 아래의 코드 추가
+case 'kcb_okcert3':
+
+v 0.4.9
+17th, Dec 2018
+1. v 0.4.7 의 개선 이전에 이미 SMS 핸드폰 소유 인증받은 번호로 재시도했으면
+그 시도의 로그가 passed = N으로 기록되어서
+또 다시 동일 번호로 인증 요청하면 이를 수락하는 오류 수정
+
+./plugins/sv_sms/sv_sms.plugin.php::setSmsAuthCode()에서 아래의 코드를
+$nAuth=count($output->data);
+if($nAuth > 0)
+{
+	$nAuth--;
+	if($output->data[$nAuth]->passed=='N')
+	{
+		$dateAuth = strtotime($output->data[0]->regdate);
+		$dateNow = strtotime('now');
+		if( floor(($dateNow-$dateAuth)/3600/24) == 0 )
+		{
+			$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err1');
+			return new Object(-1, '오늘 인증을 시도하였지만 인증되지 않은 휴대폰 번호입니다.');
+		}
+	}	
+	else if($output->data[$nAuth]->passed=='Y')
+	{
+		$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err2', 'Y');
+		return new Object(-1, '이미 인증받은 휴대폰 번호입니다.');
+	}
+}
+
+아래와 같이 변경
+$bDenyAuth = false;
+$nAuth=count($output->data);
+if($nAuth > 0)
+{
+	foreach( $output->data as $nIdx => $oAuthRec )
+	{
+		if($oAuthRec->passed=='N')
+		{
+			$dateAuth = strtotime($oAuthRec->regdate);
+			$dateNow = strtotime('now');
+			if( floor(($dateNow-$dateAuth)/3600/24) == 0 )
+			{
+				$bDenyAuth = true;
+				$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err1');
+				$sErrMsg = '오늘 인증을 시도하였지만 인증되지 않은 휴대폰 번호입니다.';
+				continue;
+			}
+		}	
+		else if($oAuthRec->passed=='Y')
+		{
+			$bDenyAuth = true;
+			$this->_recordDeniedApproach($nRequestModuleSrl, $phonenum, 'err2', 'Y');
+			$sErrMsg = '이미 인증받은 휴대폰 번호입니다.';
+			continue;
+		}
+	}
+	if( $bDenyAuth )
+		return new Object(-1, $sErrMsg );
+}
+
+v 0.4.10
+15th, Oct 2020
+1. 코드 연계 오류 개선
+./svauth.model.php::getPlugin()에서 아래의 코드를
+if( $nPluginSrl == 0 )
+	return false;
+
+$plugin_info = $this->_getPluginInfo($nPluginSrl);
+
+if( !$plugin_info )
+	return false;
+
+아래와 같이 변경
+if( $nPluginSrl == 0 )
+	return new BaseObject(-1, 'invalid_plugin_srl');
+
+$plugin_info = $this->_getPluginInfo($nPluginSrl);
+if( !$plugin_info )
+	return new BaseObject(-1, 'no_detected_plugin');
+
+v 0.4.11
+17th, Dec 2020
+1. SMS 핸드폰 소유 인증 목록에서 시간 표시 오류 수정
+./tpl/sms_auth_log_list.html에서 아래의 코드를
+<td>{zdate($val->regdate,"Y-m-d h:i:s")}</td>
+
+아래와 같이 변경
+<td>{zdate($val->regdate,"Y-m-d H:i:s")}</td>
+
+v 0.5.0
+20th, Dec 2020
+1. php v7.4.13에 대응
+모든 new Object()를 new BaseObject()로 변경
+
+v 0.5.1
+14th, Jan 2021
+1. php v7.4.13에 대응
+./svauth.controller.php에서 아래의 코드를
+function procSvauthSetAuthCode($nRequestModuleSrl)
+
+아래와 같이 변경
+function procSvauthSetAuthCode($nRequestModuleSrl=null)
+
+v 0.5.2
+14th, Sep 2021
+1. sms 인증 오류 수정
+인증 신청한 전화번호 뒤에 인증코드를 붙이면 무효한 전화번호이지만 통과하는 현상 해결
+
+./plugins/sv_sms/sv_sms.plugin.php::processResult()에서 아래의 코드 제거
+$sPhoneNumber = str_replace('-', '', strip_tags(trim(Context::get('phone_number'))));
+if(strlen($sPhoneNumber) == 0)
+	return new BaseObject(-1, 'msg_no_phone_number');
+
+./plugins/sv_sms/sv_sms.plugin.php::_verifyAuthCode()에서 아래의 코드 추가
+$sPhoneNumber = str_replace('-', '', strip_tags(trim(Context::get('phone_number'))));
+if(strlen($sPhoneNumber) == 0)
+	return new BaseObject(-1, 'msg_no_phone_number');
+
+if(strlen($output->data->clue) == 0 || $sPhoneNumber != $output->data->clue)
+	return new BaseObject(-1, '잘못된 전화번호입니다.');
+
+-------------- ToDo -----------------
+module_config->free_di -> allow_duplicate로 변경
+중복인증 허용 여부는 플러그인 마다 다를 수 있는데 모듈 공통 설정으로 구성되어 있음 -> 플러그인 설정으로 이동해야 함
+
+./svauth.model.php::getAuthLog 에서 kcb_okname 플러그인이 checkValidAuthLog()을 호출하도록 변경
+./svauth.model.php::getNextAuthLogSrl  -> auto_increment로 변경
+svcrm.controller.php::triggerInsertMemberAfter()에서 svauth.model.php::getMemberAuthInfo()을 호출하는 과정에서 보안 위험 완화 방안
+회원정보 추출할 때마다 요청 내역 로그 기록
+
+두가지 방식의 본인 인증 방법 지원
+display action hooking on foreground via mob and PC skin
+ajax call on background

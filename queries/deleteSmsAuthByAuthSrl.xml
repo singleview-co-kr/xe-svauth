@@ -1,0 +1,8 @@
+<query id="deleteSmsAuthByAuthSrl" action="delete">
+    <tables>
+        <table name="svauth_sms_log" />
+    </tables>
+	<conditions>
+        <condition operation="equal" column="sms_auth_srl" var="sms_auth_srl" notnull="notnull" />
+    </conditions>
+</query>

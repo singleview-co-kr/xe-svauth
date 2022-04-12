@@ -1,0 +1,33 @@
+@charset "utf-8";
+/*--[ Clearfix ]--*/
+.newclearfix:after{clear:both; content:' '; display:block; font-size:0; height:0; line-height:0; visibility:hidden; width:0}
+* html .newclearfix,:first-child+html .newclearfix{zoom:1}
+
+.mypage-title{margin-bottom:70px; text-align:center}
+#mypage .mypage-table{width:700px; margin:0 auto; padding:0; border:0; border-spacing:0}
+#mypage .mypage-table td{width:175px; margin:0; padding:0; text-align:center; vertical-align:middle; font-family:'Malgun Gothic',돋움,sans-serif; font-size:13px; color:#888}
+#mypage .mypage-table td a{display:block; width:100%; height:118px; background-position:center 38px; background-repeat:no-repeat; border:1px solid #ccc; border-right-color:#fff; color:#888}
+#mypage .mypage-table .bottom-tr td a{border-top-color:#fff}
+#mypage .mypage-table td.last-td a{border-right-color:#ccc}
+#mypage .mypage-table td span{line-height:160px}
+#mypage .mypage-table td .mypage1{background-image:url(../img/mypage1.png); background-position:center 32px}
+#mypage .mypage-table td .mypage2{background-image:url(../img/mypage2.png)}
+#mypage .mypage-table td .mypage3{background-image:url(../img/mypage3.png)}
+#mypage .mypage-table td .mypage4{background-image:url(../img/mypage4.png)}
+#mypage .mypage-table td .mypage5{background-image:url(../img/mypage5.png)}
+#mypage .mypage-table td .mypage6{background-image:url(../img/mypage6.png)}
+#mypage .mypage-table td .mypage7{background-image:url(../img/mypage7.png)}
+#mypage .mypage-table td .mypage8{background-image:url(../img/mypage8.png)}
+#mypage .mypage-table td .mypage1:hover{background-image:url(../img/mypage1o.png)}
+#mypage .mypage-table td .mypage2:hover{background-image:url(../img/mypage2o.png)}
+#mypage .mypage-table td .mypage3:hover{background-image:url(../img/mypage3o.png)}
+#mypage .mypage-table td .mypage4:hover{background-image:url(../img/mypage4o.png)}
+#mypage .mypage-table td .mypage5:hover{background-image:url(../img/mypage5o.png)}
+#mypage .mypage-table td .mypage6:hover{background-image:url(../img/mypage6o.png)}
+#mypage .mypage-table td .mypage7:hover{background-image:url(../img/mypage7o.png)}
+#mypage .mypage-table td .mypage8:hover{background-image:url(../img/mypage8o.png)}
+#mypage .mypage-table td a:hover,
+#mypage .mypage-table td a:focus{border-color:#888; color:#666}
+
+.xm .nav-tabs{display:none}
+.xm h1{font-family:'Malgun Gothic',돋움,sans-serif; font-weight:normal; font-size:20px; color:#333}

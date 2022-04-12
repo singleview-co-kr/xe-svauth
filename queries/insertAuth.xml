@@ -1,0 +1,20 @@
+<query id="insertAuth" action="insert">
+    <tables>
+        <table name="svauth" />
+    </tables>
+    <columns>
+        <column name="member_srl" var="member_srl" filter="number" notnull="notnull" />
+        <column name="ci" var="ci" />
+        <column name="di" var="di" />
+		<column name="result_cd" var="result_cd" />
+		<column name="result_msg" var="result_msg" />
+		<column name="seqno" var="seqno" />
+		<column name="auth_date" var="auth_date" />
+		<column name="user_name" var="user_name" />
+		<column name="birthday" var="birthday" />
+		<column name="gender" var="gender" />
+		<column name="nationality" var="nationality" />
+		<column name="ISP" var="ISP" />
+		<column name="mobile" var="mobile" />
+    </columns>
+</query>

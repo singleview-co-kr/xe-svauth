@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">트렌드샵 모바일 멤버 인증스킨</title>
+    <description xml:lang="ko">트렌드샵 모바일 멤버 인증 스킨</description>
+    <version>1.0</version>
+    <date>2015-10-31</date>
+    <author email_address="mail@cameron.co.kr" link="http://cameron.co.kr/">
+        <name xml:lang="ko">CAMERON</name>
+        <name xml:lang="en">CAMERON</name>
+    </author>
+</skin>

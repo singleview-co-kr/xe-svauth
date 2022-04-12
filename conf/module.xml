@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+    <actions>
+		<action name="dispSvauthAdminDefaultSetting" type="view" admin_index="true" />
+		<action name="dispSvauthAdminInsertPlugin" type="view" />
+		<action name="dispSvauthAdminUpdatePlugin" type="view" />
+		<action name="dispSvauthAdminPluginList" type="view" />
+		<action name="dispSvauthAdminManageAuthList" type="view" />
+		<action name="dispSvauthAdminManageSmsAuthList" type="view" />
+		<action name="dispSvauthAdminManageAuthMemberList" type="view" />
+		<action name="dispSvauthAdminDeleteAuthByMemberSrl" type="view" />
+		<action name="dispSvauthAdminDeleteAuthLog" type="view" />
+		<action name="dispSvauthAdminBoardConnect" type="view" />
+
+		<action name="dispSvauthLoginForm" type="view" />
+		<action name="dispSvauthPopup" type="view" />
+		<action name="dispSvauthResult" type="view" />
+
+		<action name="dispSvauthIpinResult" type="view" />
+		
+		<action name="procSvauthAdminInsertConfig" type="controller" />
+		<action name="procSvauthAdminInsertPlugin" type="controller" />
+		<action name="procSvauthAdminUpdatePlugin" type="controller" />
+		<action name="procSvauthAdminDeleteAuthByMemberSrl" type="controller" />
+		<action name="procSvauthAdminDeleteAuthByAuthLog" type="controller" />
+		<action name="procSvauthAdminUpdateBoardConnect" type="controller" />
+		<action name="procSvauthAdminDeleteSmsAuth" type="controller" />
+		
+		<action name="procSvauthSetAuthCode" type="controller" />
+		<action name="procSvauthValidateAuthCode" type="controller" />
+    </actions>
+</module>

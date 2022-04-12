@@ -1,0 +1,116 @@
+<include target="../../../member/skins/default/common_header.html" />
+<load target="../../../member/skins/default/filter/openid_login.xml" />
+<load target="../../tpl/js/okname.js" />
+<div cond="$XE_VALIDATOR_MESSAGE" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+<block cond="!$signup">
+<h1 class="h1">{$lang->member} {$lang->cmd_login}</h1>
+<form ruleset="@login" action="./" method="post" id="fo_member_login" class="form">
+	<input type="hidden" name="success_return_url" value="{$referer_url}" />
+	<input type="hidden" name="act" value="procMemberLogin" />
+	<ul>
+		<li>
+			<p class="q"><label for="uid"><!--@if($identifier == 'user_id')-->{$lang->user_id}<!--@else-->{$lang->email_address}<!--@end--></label></p>
+			<p class="a"><input type="text" name="user_id" id="uid" value="" /></p>
+		</li>
+		<li>
+			<p class="q"><label for="upw">{$lang->password}</label></p>
+			<p class="a"><input type="password" name="password" id="upw" value="" /></p>
+		</li>
+	</ul>	
+	<p style="margin:1em 0">
+		<input type="checkbox" name="keep_signed" id="keepid_opt" value="Y" />
+		<label for="keepid_opt">{$lang->keep_signed}</label>
+	</p>
+	<div class="message info" id="keep_msg">
+		<p>{$lang->about_keep_warning}</p>
+	</div>
+	<div class="btnArea">
+		<span class="btn"><input type="submit" value="{$lang->cmd_login}" /></span>
+		<span class="etc">
+			<a href="{getUrl('act','dispMemberFindAccount')}"><span>{$lang->cmd_find_member_account}</span></a> |
+			<a href="{getUrl('act','dispMemberSignUpForm')}"><span>{$lang->cmd_signup}</span></a>
+		</span>
+	</div>
+</form>
+</block>
+<h1 class="h1" cond="!$signup">비회원 본인인증</h1>
+<h1 class="h1" cond="$signup">본인인증</h1>
+<form name="okname_frm" action="./" method="post">
+	<ul>
+		<li>
+			<p class="q">본인 인증수단 선택</p>
+			<p class="a"><span class="btn"><input type="button" value="안심본인인증" onClick="jsSubmit();"></span></p>
+			<p class="a"><span class="btn"><input type="button" value="아이핀" onClick="certKCBIpin()"/></span></p>
+		</li>
+	</ul>
+</form>
+<div cond="$signup">
+	<h4>회원가입을 하시려면 먼저, 본인 인증을 거치셔야합니다.</h4>
+	<ul>
+		<li> 아이핀과 안심본인인증을 선택하여 인증받을 수 있습니다.</li>
+		<li> 해당 인증수단으로 수집되는 정보는 이름,생년월일,성별 입니다.</li>
+		<li> 안심 본인인증을 요청하신 경우, 휴대폰번호와 통신사가 추가로 수집될 수 있습니다.</li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<form name="kcbInForm" method="post">
+  <input type="hidden" name="IDPCODE" value="{$idpCode}" />
+  <input type="hidden" name="IDPURL" value="{$idpUrl}" />
+  <input type="hidden" name="CPCODE" value="{$cpCode}" />
+  <input type="hidden" name="CPREQUESTNUM" value="{$curtime}" />
+  <input type="hidden" name="RETURNURL" value="{$returnUrl}" />
+  <input type="hidden" name="WEBPUBKEY" value="{$pubkey}" />
+  <input type="hidden" name="WEBSIGNATURE" value="{$sig}" />
+</form>
+<form name="auth_frm" method="post">
+<input type="hidden" name="tc" value="kcb.oknm.online.safehscert.popup.cmd.P901_CertChoiceCmd">
+<input type="hidden" name="rqst_data" id="rqst_data"	value="">
+<input type="hidden" name="target_id"	value="">
+</form>
+<form name="kcbResultForm" method="post" >
+	<input type="hidden" name="idcf_mbr_com_cd" 		value="" />
+	<input type="hidden" name="hs_cert_svc_tx_seqno" 	value=""	/>
+	<input type="hidden" name="hs_cert_msr_cd" 			value="" />
+	<input type="hidden" name="hs_cert_rqst_caus_cd" 	value="" />
+	<input type="hidden" name="result_cd" 				value="" 	/>
+	<input type="hidden" name="result_msg" 				value="" 	/>
+	<input type="hidden" name="act" value="" />
+	<input type="hidden" name="signupform" value="{$signup}" />
+	<input type="hidden" name="ss" value="nm" />
+</form>
+<form name="kcbOutForm" method="post">
+  <input type="hidden" name="encPsnlInfo" />
+  <input type="hidden" name="virtualno" />
+  <input type="hidden" name="dupinfo" />
+  <input type="hidden" name="realname" />
+  <input type="hidden" name="cprequestnumber" />
+  <input type="hidden" name="age" />
+  <input type="hidden" name="sex" />
+  <input type="hidden" name="nationalinfo" />
+  <input type="hidden" name="birthdate" />
+  <input type="hidden" name="coinfo1" />
+  <input type="hidden" name="coinfo2" />
+  <input type="hidden" name="ciupdate" />
+  <input type="hidden" name="cpcode" />
+  <input type="hidden" name="authinfo" />
+  <input type="hidden" name="act" value="" />
+  <input type="hidden" name="signupform" value="{$signup}" />
+  <input type="hidden" name="ss" value="nm" />
+</form>
+	
+<script type="text/javascript">	
+jQuery(function($){
+	var keep_msg = $('#keep_msg');
+	keep_msg.hide();
+	$('#keepid_opt').change(function(){
+		if($(this).is(':checked')){
+			keep_msg.slideDown(200);
+		} else {
+			keep_msg.slideUp(200);
+		}
+	});
+});
+</script>
+<include target="../../../member/skins/default/common_footer.html" />

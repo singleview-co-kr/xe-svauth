@@ -1,0 +1,8 @@
+<query id="getMaxAuthLogSrl" action="select">
+    <tables>
+        <table name="svauth_log" />
+    </tables>
+    <columns>
+        <column name="max(auth_log_srl)" alias="auth_log_srl" />
+    </columns>
+</query>

@@ -1,0 +1,21 @@
+<load target="js/script.js" />
+<load target="lang" />
+
+<form id="fo_kcbokname" name="fo_sv_sms" action="./" method="post" enctype="multipart/form-data" class="form-horizontal">
+<input type="hidden" name="module" value="svauth" />
+<input type="hidden" name="act" value="dispSvauthPopup" />
+<input type="hidden" name="plugin_srl" id="plugin_srl" value="{$plugin_srl}" />
+
+<table id="signup-table">
+	<tbody>
+		<tr>
+			<th><label for="phone_number" class="control-label"><em style="color:red">*</em> 휴대폰(01012345678)</label></th>
+			<td><input type="text" id="phone_number" name="phone_number" maxlength="11" size="15" value="01012345678"><input type="button" value="SMS 인증번호 받기" class="signup-btn signup-btn-submit" onClick="getAuthCode();"/></td>
+		</tr>
+		<tr>
+			<th><label for="authcode" class="control-label"><em style="color:red">*</em> 휴대폰 인증</label></th>
+			<td><input type="text" name="authcode" id="authcode" maxlength="11" size="15" value="96984" placeholder='인증번호'><input type="button" value="인증하기" class="signup-btn signup-btn-submit" onClick="validateAuthCode();"/></td>
+		</tr>
+	</tbody>
+</table>
+</form>

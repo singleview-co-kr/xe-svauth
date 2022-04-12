@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lang>
+	<item name="cmd_order_view">
+		<value xml:lang="ko"><![CDATA[주문/배송조회]]></value>
+		<value xml:lang="en"><![CDATA[Order/Tracking]]></value>
+		<value xml:lang="jp"><![CDATA[ご注文/配送確認]]></value>
+		<value xml:lang="zh-TW"><![CDATA[訂單/發貨查詢]]></value>
+	</item>
+	<item name="cmd_cart">
+		<value xml:lang="ko"><![CDATA[장바구니]]></value>
+		<value xml:lang="en"><![CDATA[Cart]]></value>
+		<value xml:lang="jp"><![CDATA[カーゴ]]></value>
+		<value xml:lang="zh-TW"><![CDATA[購物車]]></value>	
+	</item>
+	<item name="cmd_favorites">
+		<value xml:lang="ko"><![CDATA[찜목록]]></value>
+		<value xml:lang="en"><![CDATA[Favorites]]></value>
+		<value xml:lang="jp"><![CDATA[お気に入り]]></value>
+		<value xml:lang="zh-TW"><![CDATA[有興趣品項]]></value>
+	</item>
+	<item name="cmd_view_own_document">
+		<value xml:lang="ko"><![CDATA[내 글 보기]]></value>
+		<value xml:lang="en"><![CDATA[Written Articles]]></value>
+		<value xml:lang="jp"><![CDATA[書き込み履歴]]></value>
+		<value xml:lang="zh-CN"><![CDATA[会员话题]]></value>
+		<value xml:lang="zh-TW"><![CDATA[發表主題]]></value>
+		<value xml:lang="fr"><![CDATA[Voir les Articles écrits]]></value>
+		<value xml:lang="ru"><![CDATA[Просмотреть написанные записи]]></value>
+		<value xml:lang="es"><![CDATA[Ver documentos escritos]]></value>
+		<value xml:lang="tr"><![CDATA[Yazılmış Makaleler]]></value>
+		<value xml:lang="vi"><![CDATA[Bài gửi]]></value>
+	</item>
+</lang>
