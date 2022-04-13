@@ -70,8 +70,6 @@ class svauthAdminController extends svauth
         eval($sExcutable);
 		if(@method_exists($oPlugin,'pluginInstall'))
 			$oPlugin->pluginInstall($args);
-
-		// 결과 리턴
 		$this->add('plugin_srl', $plugin_srl);
 	}
 /**
@@ -83,7 +81,7 @@ class svauthAdminController extends svauth
 		$oArgs = Context::getRequestVars();
 		foreach($oArgs as $k => $v)
 		{
-			if(substr($k,0,5) == 'board' )
+			if(substr($k,0,5) == 'board')
 			{
 				$aChunk = explode('_', $k);
 				$nBoardModuleSrl = $aChunk[1];
@@ -98,7 +96,7 @@ class svauthAdminController extends svauth
 			$this->setMessage( 'error_occured' );
 		else
 			$this->setMessage( 'success_updated' );
-		$this->setRedirectUrl(getNotEncodedUrl('', 'module', Context::get('module'), 'act', 'dispSvauthAdminBoardConnect' ));
+		$this->setRedirectUrl(getNotEncodedUrl('', 'module', Context::get('module'), 'act', 'dispSvauthAdminBoardConnect'));
 	}
 /**
  * @brief update plugin info. (it will be deleted in the future)
@@ -126,7 +124,6 @@ class svauthAdminController extends svauth
 				{
 					$image_obj = $extra_vars->{$name};
 					$extra_vars->{$name} = $oPluginInfo->extra_var->{$name}->value;
-
 					// 삭제 요청에 대한 변수를 구함
 					$del_var = $extra_vars->{"del_".$name};
 					unset($extra_vars->{"del_".$name});
@@ -138,60 +135,52 @@ class svauthAdminController extends svauth
 						if($del_var == 'Y' && !$image_obj['tmp_name']) 
 							continue;
 					}
-
 					// 정상적으로 업로드된 파일이 아니면 무시
 					if(!$image_obj['tmp_name'] || !is_uploaded_file($image_obj['tmp_name'])) 
 						continue;
-
 					// 이미지 파일이면 확장자 검사
-					if ( $vars->type=='image' )
+					if($vars->type=='image')
 					{
 						if(!preg_match("/\.(jpg|jpeg|gif|png|swf|enc|pem)$/i", $image_obj['name'])) 
 							continue;
 					}
-					else if ( $vars->type=='file' ) // 일반 파일이면 kcb okcert 라이센스 파일인 dat 확장자만 허용
+					elseif($vars->type=='file') // 일반 파일이면 kcb okcert 라이센스 파일인 dat 확장자만 허용
 					{
 						if(!preg_match("/\.(dat)$/i", $image_obj['name'])) 
 							continue;
 					}
-
 					// 경로를 정해서 업로드
-					if ( $vars->type=='file' )
+					if($vars->type=='file')
 					{
 						$path = sprintf("./files/svauth/%s/",$args->plugin_srl);
 						$sWebserverRoot = str_replace('/modules/svauth/svauth.admin.controller.php', '', realpath(__FILE__)); 
 						$sFileAbsPath = $sWebserverRoot.'/files/svauth/'.$args->plugin_srl.'/';
 					}
-					elseif ( $vars->type=='image' )
+					elseif($vars->type=='image')
 						$path = sprintf("./files/attach/images/%s/", $args->plugin_srl);
 
 					// 디렉토리 생성
 					if(!FileHandler::makeDir($path))
 						continue;
-
 					$filename = $path.$image_obj['name'];
-
 					// 파일 이동
 					if(!move_uploaded_file($image_obj['tmp_name'], $filename))
 						continue;
-
 					// 경로를 정해서 업로드
-					if ( $vars->type=='file' )
+					if($vars->type=='file')
 						$extra_vars->{$name} = $sFileAbsPath.$image_obj['name'];
-					elseif ( $vars->type=='image' )
+					elseif($vars->type=='image')
 						$extra_vars->{$name} = $filename;
 				}
 			}
 		}
 		// DB에 입력하기 위한 변수 설정
 		$args->extra_vars = serialize($extra_vars);
-
 		$output = executeQuery('svauth.updatePlugin', $args);
 		if(!$output->toBool()) 
 			return $output;
-
 		$this->setMessage('설정이 저장되었습니다.');
-		$this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispSvauthAdminUpdatePlugin','plugin_srl',$args->plugin_srl ));
+		$this->setRedirectUrl(getNotEncodedUrl('', 'module', 'admin', 'act', 'dispSvauthAdminUpdatePlugin','plugin_srl',$args->plugin_srl));
 	}
 /**
  * @brief SMS 핸드폰 소유 인증 번호로 인증 삭제
@@ -199,12 +188,11 @@ class svauthAdminController extends svauth
 	function procSvauthAdminDeleteSmsAuth()
 	{
 		$aSmsAuthSrl = Context::get('sms_auth_srls');
-		
-		foreach( $aSmsAuthSrl as $key=>$val )
+		foreach($aSmsAuthSrl as $key=>$val)
 		{
 			$args->sms_auth_srl = $val;
-			$output = executeQuery('svauth.deleteSmsAuthByAuthSrl', $args );
-			if( !$output->toBool() )
+			$output = executeQuery('svauth.deleteSmsAuthByAuthSrl', $args);
+			if(!$output->toBool())
 				return $output;
 		}
 		$this->setRedirectUrl(getNotEncodedUrl('', 'module','admin','act','dispSvauthAdminManageSmsAuthList'));
@@ -216,15 +204,13 @@ class svauthAdminController extends svauth
 	{
 		$sDi = Context::get('di');
 		$sCi = Context::get('ci');
-		if( strlen( $sDi ) == 0 | strlen( $sCi ) == 0 )
-			return new BaseObject(-1, 'msg_invalid_requet' );
-
+		if(strlen($sDi) == 0 || strlen($sCi) == 0)
+			return new BaseObject(-1, 'msg_invalid_requet');
 		$args->di = $sDi;
 		$args->ci = $sCi;
-		$output = executeQuery('svauth.deleteAuthLogByCiByDi', $args );
-		if( !$output->toBool() )
+		$output = executeQuery('svauth.deleteAuthLogByCiByDi', $args);
+		if(!$output->toBool())
 			return $output;
-
 		$this->setRedirectUrl(getNotEncodedUrl('', 'module','admin','act','dispSvauthAdminManageAuthList'));
 	}
 /**
@@ -236,23 +222,19 @@ class svauthAdminController extends svauth
 		$args->is_deleted = 'N';
 		$args->member_srl = $nMemberSrl;
 		$output = executeQuery('svauth.getMemberAuthInfo', $args);
-
 		$args->ci = $output->data->ci;
 		$args->di = $output->data->di;
-		$output = executeQuery('svauth.deleteAuthLogByCiByDi', $args );
-		if( !$output->toBool() )
+		$output = executeQuery('svauth.deleteAuthLogByCiByDi', $args);
+		if(!$output->toBool())
 			return $output;
-		
 		$args->is_deleted = 'Y';
-		$output = executeQuery('svauth.deleteAuthByMemberSrl', $args );
-		if( !$output->toBool() )
+		$output = executeQuery('svauth.deleteAuthByMemberSrl', $args);
+		if(!$output->toBool())
 			return $output;
-		
 		$oMemberController = getController('member');
 		$output = $oMemberController->deleteMember($nMemberSrl);
 		if(!$output->toBool()) 
 			return $output;
-
 		$this->setRedirectUrl(getNotEncodedUrl('', 'module','admin','act','dispSvauthAdminManageAuthMemberList'));
 	}
 }

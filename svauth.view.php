@@ -38,14 +38,12 @@ class svauthView extends svauth
 	function dispSvauthPopup()
 	{
 		$nPluginSrl = Context::get('plugin_srl');
-		if (!$nPluginSrl) 
+		if(!$nPluginSrl) 
 			return new BaseObject(-1, 'no plugin_srl');
-		
 		$oSvauthModel = &getModel('svauth');
 		$oPlugin = $oSvauthModel->getPlugin($nPluginSrl);
 		$output = $oPlugin->processReview();
 		Context::set('content', $output);
-		
 		// generate blank window
 		$this->setLayoutPath(_XE_PATH_.'common/tpl/');
 		$this->setLayoutFile('default_layout');
@@ -64,11 +62,9 @@ class svauthView extends svauth
 		}
 		Context::set('target_module', $in_args->target_module);
 		Context::set('join_form', $in_args->join_form);
-
 		//load config
 		$oModuleModel = &getModel('module');
 		$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
-
 		if(!$oModuleConfig) 
 			return new BaseObject(-1, 'msg_invalid_svauth_module');
 		if(!$oModuleConfig->skin) 
@@ -76,19 +72,17 @@ class svauthView extends svauth
 		Context::set('svauth_module_info', $oModuleConfig);
 
 		$sFormHtml = '';
-
-		if ($oModuleConfig->plugin_srl)
+		if($oModuleConfig->plugin_srl)
 		{
 			$oSvauthModel = &getModel('svauth');
 			$oPlugin = $oSvauthModel->getPlugin($oModuleConfig->plugin_srl);
 			$output = $oPlugin->getFormData();
-			if (!$output->toBool()) 
+			if(!$output->toBool()) 
 				return $output;
 			$sFormHtml = $output->data;
 		}
 		else
 			$sFormHtml = 'No plugin selected';
-
 		Context::set('form_data', $sFormHtml);
 		$sTemplatePath = $this->module_path."skins/".$oModuleConfig->skin;
 		if(!is_dir($sTemplatePath)||!$this->module_info->skin) 
@@ -96,7 +90,6 @@ class svauthView extends svauth
 			$this->module_info->skin = 'default';
 			$sTemplatePath = sprintf("%sskins/%s/",$this->module_path, $this->module_info->skin);
 		}
-
 		// Set a template file
 		$this->setTemplateFile('signup_form');
 	}
@@ -111,19 +104,17 @@ class svauthView extends svauth
 
 		$oSvauthModel = &getModel('svauth');
 		$oPlugin = $oSvauthModel->getPlugin($nAuthPluginSrl);
-		if (!$oPlugin ) 
+		if(!$oPlugin) 
 			return new BaseObject(-1,"illegal approach ");
 
 		$oModuleModel = &getModel('module');
 		$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
-
 		$sForm = $oPlugin->processResult($oModuleConfig );
 		Context::set('content', $sForm);
 
 		// generate blank window
 		$this->setLayoutPath(_XE_PATH_.'common/tpl/');
 		$this->setLayoutFile('default_layout');
-
 		$this->setTemplatePath($this->module_path.'tpl');
 		$this->setTemplateFile('popup');
 	}

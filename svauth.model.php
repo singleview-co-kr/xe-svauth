@@ -18,9 +18,8 @@ class svauthModel extends svauth
  */
 	function getMemberAuthInfo($nMemberSrl)
 	{
-		if( $nMemberSrl == 0 )
+		if($nMemberSrl == 0)
 			return false;
-
 		$args->member_srl = $nMemberSrl;
 		$args->is_deleted = 'N';
 		$output = executeQuery('svauth.getMemberAuthInfo', $args);
@@ -31,12 +30,11 @@ class svauthModel extends svauth
  */
 	function getPlugin($nPluginSrl)
 	{
-		if( $nPluginSrl == 0 )
+		if($nPluginSrl == 0)
 			return new BaseObject(-1, 'invalid_plugin_srl');
 		$plugin_info = $this->_getPluginInfo($nPluginSrl);
-		if( !$plugin_info )
+		if(!$plugin_info)
 			return new BaseObject(-1, 'no_detected_plugin');
-
 		require_once(sprintf("%ssvauth.plugin.php",$this->module_path));
 		require_once(sprintf("%splugins/%s/%s.plugin.php",$this->module_path, $plugin_info->plugin, $plugin_info->plugin));
 		$sExcutable = sprintf('$pluginObj = new %s();', $plugin_info->plugin);
@@ -51,11 +49,9 @@ class svauthModel extends svauth
 	{
 		$oModuleModel = &getModel('module');
 		$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
-		
 		$nPluginSrl = $oModuleConfig->plugin_srl;
 		if(!$nPluginSrl) 
 			return new BaseObject(-1, 'no plugin_srl');
-		
 		$oSvauthModel = &getModel('svauth');
 		$oPlugin = $oSvauthModel->getPlugin($nPluginSrl);
 		$sAuthPluginType = trim($oPlugin->_g_oPluginInfo->plugin);
@@ -75,8 +71,8 @@ class svauthModel extends svauth
 				if(!$output->data) 
 					return null;
 
-				if( strlen( $output->data->di ) > 0 )
-					return unserialize( $output->data->auth_info);
+				if(strlen($output->data->di) > 0)
+					return unserialize($output->data->auth_info);
 				else
 					return null;
 				break;

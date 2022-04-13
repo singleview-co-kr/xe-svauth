@@ -41,7 +41,6 @@ class svauthAdminView extends svauth
 		Context::set('skin_list',$skin_list);
 		$mskin_list = $oModuleModel->getSkins($this->module_path, "m.skins");
 		Context::set('mskin_list', $mskin_list);
-
 		$this->setTemplateFile('setting');
 	}
 /**
@@ -51,17 +50,15 @@ class svauthAdminView extends svauth
 	{
 		$output = executeQueryArray('board.getBoardList', $args);
 		ModuleModel::syncModuleToSite($output->data);
-		
 		$nIdx = 0;
 		$aBoard = array();
-		foreach( $output->data as $key=>$val)
+		foreach($output->data as $key=>$val)
 		{
             $aBoard[$nIdx] = new stdClass();
 			$aBoard[$nIdx]->module_srl =  $val->module_srl;
 			$aBoard[$nIdx++]->mid =  $val->mid;
 		}
 		Context::set('board_list', $aBoard);
-
 		$oSvauthAdminModel = &getAdminModel('svauth');
 		$aPluginList = $oSvauthAdminModel->getPluginList();
 		Context::set('plugins', $aPluginList);
@@ -88,17 +85,17 @@ class svauthAdminView extends svauth
 		// plugin info
 		$oPluginInfo = $oSvauthAdminModel->getPluginInfo($nPluginSrl);
 		$sPluginSkin = 'updateplugin';
-		if( $oPluginInfo->title == 'KCB okcert3 플러그인' )
+		if($oPluginInfo->title == 'KCB okcert3 플러그인')
 		{
-			if( !function_exists('okcert3_u') || !function_exists('okcert3') )
+			if(!function_exists('okcert3_u') || !function_exists('okcert3'))
 			{
 				Context::set('plugin_title', 'kcb_okcert3');
 				$sPluginSkin = 'kcb_plugin_not_installed';
 			}
 		}
-		else if( $oPluginInfo->title == 'KCB OkName 플러그인' )
+		else if($oPluginInfo->title == 'KCB OkName 플러그인')
 		{
-			if( !function_exists('okname') )
+			if(!function_exists('okname'))
 			{
 				Context::set('plugin_title', 'kcb_okname');
 				$sPluginSkin = 'kcb_plugin_not_installed';
@@ -118,7 +115,6 @@ class svauthAdminView extends svauth
 		//	return $output;
 		$oSvauthAdminModel = &getAdminModel('svauth');
 		$aPluginList = $oSvauthAdminModel->getPluginList();
-
 		Context::set('plugins', $aPluginList);
 		Context::set('total_count', $output->total_count);
 		Context::set('total_page', $output->total_page);
@@ -134,7 +130,7 @@ class svauthAdminView extends svauth
         $args = new stdClass;
 		$args->page = Context::get('page');
 		$output = executeQueryArray('svauth.getAuthList', $args);
-		if (!$output->toBool()) 
+		if(!$output->toBool()) 
 			return $output;
 		Context::set('auth_list', $output->data);
 		Context::set('total_count', $output->total_count);
@@ -151,16 +147,14 @@ class svauthAdminView extends svauth
 		$sSearchKeyword = Context::get('search_keyword');
 		if($sSearchKeyword)
 			$args->search_keyword = $sSearchKeyword;
-		
         $args = new stdClass;
 		$args->page = Context::get('page');
 		$output = executeQueryArray('svauth.getAuthLogList', $args);
-		if (!$output->toBool()) 
+		if(!$output->toBool()) 
 			return $output;
-		
-		foreach( $output->data as $key=>$val)
+		foreach($output->data as $key=>$val)
 		{
-			$aAuthInfo = unserialize( $val->auth_info );
+			$aAuthInfo = unserialize($val->auth_info);
 			$output->data[$key]->user_name = $aAuthInfo[user_name];
 			$output->data[$key]->mobile = $aAuthInfo[mobile];		
 			$output->data[$key]->auth_date = $aAuthInfo[auth_date];
@@ -181,21 +175,19 @@ class svauthAdminView extends svauth
 		$args = new stdClass;
         if($sSearchKeyword)
 			$args->search_keyword = $sSearchKeyword;
-        
 		$args->page = Context::get('page');
 		$output = executeQueryArray('svauth.getSmsAuthLogList', $args);
-		if (!$output->toBool()) 
+		if(!$output->toBool()) 
 			return $output;
-		
-		foreach( $output->data as $key=>$val)
+		foreach($output->data as $key=>$val)
 		{
-			if( $output->data[$key]->authcode == 'err1' )
+			if($output->data[$key]->authcode == 'err1')
 				$output->data[$key]->authcode = '인증없이 인증코드 요청 반복';
-			else if( $output->data[$key]->authcode == 'err2' )
+			else if($output->data[$key]->authcode == 'err2')
 				$output->data[$key]->authcode = '인증 완료 후 재시도';
-			else if( $output->data[$key]->authcode == 'err3' || $output->data[$key]->authcode == 'err5' )
+			else if($output->data[$key]->authcode == 'err3' || $output->data[$key]->authcode == 'err5')
 				$output->data[$key]->authcode = '인증번호 반복 요청하여 1일 차단';
-			else if( $output->data[$key]->authcode == 'err4' ||  $output->data[$key]->authcode == 'err6' )
+			else if($output->data[$key]->authcode == 'err4' ||  $output->data[$key]->authcode == 'err6')
 				$output->data[$key]->authcode = 'X초 동안 인증번효 요청 거부';
 		}
 		Context::set('auth_list', $output->data);
@@ -214,12 +206,11 @@ class svauthAdminView extends svauth
 	{
 		$args->di = Context::get('di');
 		$output = executeQueryArray('svauth.getAuthInfoByAuthLog', $args);
-		if (!$output->toBool()) 
+		if(!$output->toBool()) 
 			return $output;
-		if( count($output->data ) != 1 )
+		if(count($output->data) != 1)
 			return new BaseObject(-1, 'msg_weird_auth_record');
-		
-		$aRst = unserialize( $output->data[0]->auth_info );
+		$aRst = unserialize($output->data[0]->auth_info);
 		Context::set('ci', $aRst[CI]);
 		Context::set('valid_di', $aRst[DI]);
 		Context::set('result_msg', $aRst[resultMsg]);
@@ -237,9 +228,9 @@ class svauthAdminView extends svauth
 		$args->member_srl = Context::get('member_srl');
 		$args->is_deleted = 'N';
 		$output = executeQueryArray('svauth.getMemberAuthInfo', $args);
-		if (!$output->toBool()) 
+		if(!$output->toBool())
 			return $output;
-		if( count($output->data ) != 1 )
+		if(count($output->data ) != 1)
 			return new BaseObject(-1, 'msg_weird_auth_record');
 		Context::set('result_msg', $output->data[0]->result_msg);
 		Context::set('auth_date', $output->data[0]->auth_date);

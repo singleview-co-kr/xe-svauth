@@ -27,9 +27,9 @@ class kcb_okcert3 extends SvauthPlugin
 	public function init(&$args)
 	{
 		$this->_g_oPluginInfo = new StdClass();
-		foreach ($args as $key=>$val)
+		foreach($args as $key=>$val)
 			$this->_g_oPluginInfo->{$key} = $val;
-		foreach ($args->extra_var as $key=>$val)
+		foreach($args->extra_var as $key=>$val)
 			$this->_g_oPluginInfo->{$key} = $val->value;
 		Context::set('plugin_info', $this->_g_oPluginInfo);
 	}
@@ -38,7 +38,7 @@ class kcb_okcert3 extends SvauthPlugin
  */
 	public function getFormData($args)
 	{
-		if( !$this->_g_oPluginInfo->plugin_srl )
+		if(!$this->_g_oPluginInfo->plugin_srl)
 			return new BaseObject(-1,'plugin_srl not defined');
 
 		Context::set('plugin_srl', $this->_g_oPluginInfo->plugin_srl);
@@ -46,7 +46,6 @@ class kcb_okcert3 extends SvauthPlugin
 		$tpl_path = _XE_PATH_."modules/svauth/plugins/kcb_okcert3/tpl";
 		$tpl_file = 'formdata.html';
 		$form_data = $oTemplate->compile($tpl_path, $tpl_file);
-
 		$output = new BaseObject();
 		$output->data = $form_data;
 		return $output;
@@ -71,74 +70,73 @@ class kcb_okcert3 extends SvauthPlugin
 
 		// * 파라미터에 대한 유효성여부를 검증한다.
 		$inTpBit = $oArgs->in_tp_bit;// $_POST["in_tp_bit"];	// 입력구분코드(0:없음, 1:기본정보, 2:내외국인, 4:휴대폰정보)
-		if (preg_match('~[^0-9]~', $inTpBit, $match)) 
+		if(preg_match('~[^0-9]~', $inTpBit, $match)) 
 		{
 			echo ("<script>alert('입력구분코드에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 			exit;
 		}
 		$inTpBitVal = intval($inTpBit, 0);
-		if (($inTpBitVal & 1) == 1) 
+		if(($inTpBitVal & 1) == 1) 
 		{
 			$name = $oArgs->name; //$_POST["name"]; // 성명
-			if (preg_match('~[^\x{ac00}-\x{d7af}a-zA-Z ]~u', $name, $match)) 
+			if(preg_match('~[^\x{ac00}-\x{d7af}a-zA-Z ]~u', $name, $match)) 
 			{	// UTF-8인 경우
 				echo ("<script>alert('성명에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 				exit;
 			}
 		}
-		if (($inTpBitVal & 2) == 2) 
+		if(($inTpBitVal & 2) == 2) 
 		{
 			$birthday = $oArgs->birthday;//$_POST["birthday"]; // 생년월일
-			if (preg_match('~[^0-9]~', $birthday, $match)) 
+			if(preg_match('~[^0-9]~', $birthday, $match)) 
 			{
 				echo ("<script>alert('생년월일에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 				exit;
 			}
 		}
-		if (($inTpBitVal & 4) == 4) 
+		if(($inTpBitVal & 4) == 4) 
 		{
 			$sex = $oArgs->sex;// $_POST["sex"]; // 성별
 			$nation = $oArgs->nation;// $_POST["nation"]; // 내외국인구분
-			if (preg_match('~[^01]~', $sex, $match)) 
+			if(preg_match('~[^01]~', $sex, $match)) 
 			{
 				echo ("<script>alert('성별에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 				exit;
 			}
-			if (preg_match('~[^12]~', $nation, $match)) 
+			if(preg_match('~[^12]~', $nation, $match)) 
 			{
 				echo ("<script>alert('내외국인 구분에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 				exit;
 			}
 		}
-		if (($inTpBitVal & 8) == 8) 
+		if(($inTpBitVal & 8) == 8) 
 		{
 			//$telComCd = $oArgs->tel_com_cd;// $_POST["tel_com_cd"]; // 통신사코드
 			$telNo = $oArgs->tel_no;// $_POST["tel_no"]; // 휴대폰번호
-
 			//if (preg_match('~[^0-9]~', $telComCd, $match)) 
 			//{
 			//	echo ("<script>alert('통신사코드에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 			//	exit;
 			//}
-			if (preg_match('~[^0-9]~', $telNo, $match)) 
+			if(preg_match('~[^0-9]~', $telNo, $match)) 
 			{
 				echo ("<script>alert('휴대폰번호에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 				exit;
 			}
 		}
 		$rqstCausCd = $oArgs->rqst_caus_cd;//$_POST["rqst_caus_cd"]; // 인증요청사유코드 2byte  (00:회원가입, 01:성인인증, 02:회원정보수정, 03:비밀번호찾기, 04:상품구매, 99:기타)
-		if (preg_match('~[^0-9]~', $rqstCausCd, $match)) 
+		if(preg_match('~[^0-9]~', $rqstCausCd, $match)) 
 		{
 			echo ("<script>alert('인증요청사유코드에 유효하지 않은 문자열이 있습니다.'); self.close();</script>");
 			exit;
 		}
-		if( strlen( $this->_g_oPluginInfo->CP_CD ) == 0 || is_null($this->_g_oPluginInfo->CP_CD) )
+		if(strlen($this->_g_oPluginInfo->CP_CD) == 0 || is_null($this->_g_oPluginInfo->CP_CD))
 		{
 			echo ("<script>alert('회원사코드(CP_CD)를 입력해주세요.'); self.close();</script>");
 			exit;
 		}
 
-		if( strlen( $this->_g_oPluginInfo->SITE_URL ) == 0 || is_null($this->_g_oPluginInfo->SITE_URL) )
+		if(strlen($this->_g_oPluginInfo->SITE_URL) == 0 || is_null($this->_g_oPluginInfo->SITE_URL))
 		{
 			echo ("<script>alert('사이트 URL을 입력해주세요.'); self.close();</script>");
 			exit;
@@ -146,17 +144,14 @@ class kcb_okcert3 extends SvauthPlugin
 
 		// # 리턴 URL 설정
 		// opener(hs_cnfrm_popup1.php)의 도메일과 일치하도록 설정해야 함. 
-		$returnUrl = getNotEncodedFullUrl('','module','svauth','act','dispSvauthResult', 'plugin_srl',$oArgs->plugin_srl );
+		$returnUrl = getNotEncodedFullUrl('','module','svauth','act','dispSvauthResult', 'plugin_srl',$oArgs->plugin_srl);
 		// # 운영전환시 변경 필요
 		$popupUrl = "https://safe.ok-name.co.kr/CommonSvl";	// 운영 URL
-
 		//' 라이센스 파일
 		//$license = "C:\\okcert3_license\\".$CP_CD."_IDS_01_".$target."_AES_license.dat";
 		$license = $this->_g_oPluginInfo->license;
-
 		// # 로그 경로 지정 및 권한 부여 (절대경로)
 		$logPath = _XE_PATH_.'files/svauth/kcb_okcert3/'.$oArgs->plugin_srl.'/log';
-
 		// okcert3 request param JSON String
 		$CP_CD = $this->_g_oPluginInfo->CP_CD;
 		$RETURN_URL = $returnUrl;
@@ -170,7 +165,6 @@ class kcb_okcert3 extends SvauthPlugin
 
 		//$params .= '"CHNL_CD":"'.$CHNL_CD.'",';
 		//$params .= '"RETURN_MSG":"'.$RETURN_MSG.'",';
-
 		// 사전에 입력받은 정보로 팝업창 개인정보를 고정할 경우 사용 (가이드 참고)
 		$params .= '"IN_TP_BIT":"'.$inTpBit.'",';
 		$params .= '"NAME":"'.$name.'",';
@@ -200,30 +194,25 @@ class kcb_okcert3 extends SvauthPlugin
 		$RSLT_MSG = "";						// 결과메시지
 		$MDL_TKN = "";						// 모듈토큰
 		$TX_SEQ_NO = "";					// 거래일련번호
-		if ($ret == 0) // 함수 실행 성공일 경우 변수를 결과에서 얻음
+		if($ret == 0) // 함수 실행 성공일 경우 변수를 결과에서 얻음
 		{
 			//$out = iconv("euckr","utf-8",$out);		// 인코딩 icnov 처리. okcert3 호출(EUC-KR)일 경우에만 사용 (json_decode가 UTF-8만 가능)
 			$output = json_decode($out,true);		// $output = UTF-8
-			
 			$RSLT_CD = $output['RSLT_CD'];
 			//$RSLT_MSG  = iconv("utf-8","euckr", $output["RSLT_MSG"]);	// 다시 EUC-KR 로 변환
 			$RSLT_MSG  = $output['RSLT_MSG'];
-			
-			if( isset($output['TX_SEQ_NO']) )
+			if(isset($output['TX_SEQ_NO']))
 				$TX_SEQ_NO = $output['TX_SEQ_NO']; // 필요 시 거래 일련 번호 에 대하여 DB저장 등의 처리
-			
-			if( $RSLT_CD == 'B000' )  // B000 : 정상건
+			if($RSLT_CD == 'B000')  // B000 : 정상건
 				$MDL_TKN = $output['MDL_TKN']; 
 		}
 		else 
 			echo ("<script>alert('Fuction Fail / ret: ".$ret."'); self.close();</script>");
-		
 		Context::set('popupUrl', $popupUrl);
 		Context::set('RSLT_CD', $RSLT_CD);
 		Context::set('RSLT_MSG', $RSLT_MSG);
 		Context::set('CP_CD', $CP_CD); // 회원사코드
 		Context::set('MDL_TKN', $MDL_TKN);
-
 		$oTemplate = &TemplateHandler::getInstance();
 		$tpl_path = _XE_PATH_."modules/svauth/plugins/kcb_okcert3/tpl";
 		$tpl_file = 'review.html';
@@ -237,7 +226,7 @@ class kcb_okcert3 extends SvauthPlugin
 		$numbers  = "0123456789";   
 		$svcTxSeqno = date("YmdHis");   
 		$nmr_loops = 6;   
-		while ($nmr_loops--) {
+		while($nmr_loops--){
 			$svcTxSeqno .= $numbers[mt_rand(0, strlen($numbers)-1)];   
 		}   
 		return $svcTxSeqno;   
@@ -246,7 +235,7 @@ class kcb_okcert3 extends SvauthPlugin
  * @brief 파일명 : hs_cnfrm_popup3.php
  * 본인확인서비스 결과 화면(return url)
  */
-	public function processResult( $oModuleConfig = null )
+	public function processResult($oModuleConfig = null)
 	{
 		$oArgs = Context::getRequestVars();
 
@@ -294,14 +283,13 @@ class kcb_okcert3 extends SvauthPlugin
 			if(isset($output['RETURN_MSG']))  
 				$RETURN_MSG  = $output['RETURN_MSG'];
 			
-			if( $RSLT_CD == 'B000' ) // B000 : 정상건
+			if($RSLT_CD == 'B000') // B000 : 정상건
 			{ 
 				//$RSLT_NAME  = iconv("utf-8","euckr",$output['RSLT_NAME']); // 다시 EUC-KR 로 변환
 				$RSLT_NAME  = $output['RSLT_NAME']; // 다시 EUC-KR 로 변환
 				$RSLT_BIRTHDAY	= $output['RSLT_BIRTHDAY'];
 				$RSLT_SEX_CD	= $output['RSLT_SEX_CD'];
 				$RSLT_NTV_FRNR_CD=$output['RSLT_NTV_FRNR_CD'];
-				
 				$DI				= $output['DI'];
 				$CI 			= $output['CI'];
 				$CI_UPDATE		= $output['CI_UPDATE'];
@@ -319,11 +307,11 @@ class kcb_okcert3 extends SvauthPlugin
 		{
 			$oSvauthModel = getModel('svauth');
 			$aRst = $oSvauthModel->getAuthLog($DI);//$result[4]);
-			if( count( $aRst ) )
+			if(count($aRst))
 				return $oTemplate->compile($tpl_path, 'result_duplicated.html');
 		}
 		//인증 성공하고 중복 인증이 아니면 세션에 저장
-		if( $RSLT_CD == 'B000' )
+		if($RSLT_CD == 'B000')
 		{
 			//setcookie('sv_auth_info', $result[4], 0, '/');
 			setcookie('sv_auth_info', $DI, 0, '/');
@@ -336,7 +324,7 @@ class kcb_okcert3 extends SvauthPlugin
 			$aResult["user_name"] = $RSLT_NAME; //성명
 			$aResult["birthday"] = $RSLT_BIRTHDAY; //생년월일
 			//$aResult["age"] = substr(date('Ymd')-$result[8],0,2); //만 나이
-			switch( $RSLT_SEX_CD ) //성별 M:남, F:여
+			switch($RSLT_SEX_CD) //성별 M:남, F:여
 			{
 				case 'M':
 					$sGender = 'f';
@@ -349,7 +337,7 @@ class kcb_okcert3 extends SvauthPlugin
 			}
 			$aResult["gender"] = $sGender;
 
-			switch( $RSLT_NTV_FRNR_CD ) //내외국인구분 L:내국인, F:외국인 
+			switch($RSLT_NTV_FRNR_CD) //내외국인구분 L:내국인, F:외국인 
 			{
 				case 'L':
 					$sNationality = 'd';
@@ -362,7 +350,7 @@ class kcb_okcert3 extends SvauthPlugin
 			}
 			$aResult["nationality"] = $sNationality;
 			
-			switch( $TEL_COM_CD ) //통신사코드 01:SKT, 02:KT, 03:LGU+, 04:SKT알뜰폰, 05:KT알뜰폰, 06:LGU+알뜰폰
+			switch($TEL_COM_CD) //통신사코드 01:SKT, 02:KT, 03:LGU+, 04:SKT알뜰폰, 05:KT알뜰폰, 06:LGU+알뜰폰
 			{
 				case '01':
 					$sIsp = 'SKT';
@@ -392,7 +380,6 @@ class kcb_okcert3 extends SvauthPlugin
 		}
 		else
 			setcookie('sv_auth_info', '', 0, '/');
-
 		Context::set('ret', $ret);
 		Context::set('retcode', $RSLT_CD);
 		return $oTemplate->compile($tpl_path, 'result.html');

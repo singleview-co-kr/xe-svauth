@@ -21,19 +21,17 @@ class svauthController extends svauth
 //exit;
 		$oModuleModel = &getModel('module');
 		$oConfig = $oModuleModel->getModuleConfig('svauth');
-		
 		$nModuleSrl = $obj->module_srl;
 		$nSvPluginSrl = $obj->sv_plugin_srl;
-
-		if( isset( $oConfig->board_plugin[$nModuleSrl] ) )
+		if(isset($oConfig->board_plugin[$nModuleSrl]))
 		{
-			if( $oConfig->board_plugin[$nModuleSrl] == $nSvPluginSrl )
+			if($oConfig->board_plugin[$nModuleSrl] == $nSvPluginSrl)
 			{
-				if( $obj->is_interested == '1' )
+				if($obj->is_interested == '1')
 				{
 					$sApplicantPhoneNumber = $obj->applicant_phone_number;
 					Context::set('plugin_srl', $nSvPluginSrl );
-					Context::set('phone_number', $sApplicantPhoneNumber );
+					Context::set('phone_number', $sApplicantPhoneNumber);
 					$output = $this->procSvauthValidateAuthCode();
 					if(!$output->toBool()) 
 						return new BaseObject(-1, $output->message);
@@ -56,7 +54,6 @@ class svauthController extends svauth
 		$config = $oModuleModel->getModuleConfig('svauth');
 		if(!(int)$config->plugin_srl ) // svauth_plugin이 설정되어 있지 않으면 intercept 중지
 			return new BaseObject();
-
 		$oSvauthModel = getModel('svauth');
 		$aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
         if($aAuth['user_name'])
@@ -68,16 +65,13 @@ class svauthController extends svauth
  **/
 	function triggerInsertMemberAfter(&$obj) 
 	{
-		$member_srl = $obj->member_srl;
-		$args->member_srl = $member_srl;
+		$args = new stdClass();
+		$args->member_srl = $obj->member_srl;
 		$oSvauthModel = getModel('svauth');
 		$aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
-		//if (!$aAuth->toBool())
-		//	return new BaseObject();
-
-		if( is_array( $aAuth ) )
+		if(is_array($aAuth))
 		{
-			if( strlen( $aAuth["DI"] ) > 0 )
+			if(strlen($aAuth["DI"]) > 0)
 			{
 				$args->di = $aAuth["DI"];
 				$args->ci = $aAuth["CI"];
@@ -92,11 +86,13 @@ class svauthController extends svauth
 				$args->ISP = $aAuth["ISP"];
 				$args->mobile = $aAuth["mobile"];
 				$output = executeQuery('svauth.insertAuth',$args);
-		
-				if (!$output->toBool()) 
+				if(!$output->toBool()) 
 					return $output;
 			}
 		}
+		unset($aAuth);
+		unset($oSvauthModel);
+		unset($oSvauargsthModel);
 		setcookie('sv_auth_info', '', 0, '/');
 		//unset($_SESSION['auth_info']);
 		return new BaseObject();
@@ -108,12 +104,13 @@ class svauthController extends svauth
  **/
 	function triggerDeleteMemberBefore(&$obj) 
 	{
+		$args = new stdClass();
 		$args->member_srl = $obj->member_srl;
 		$args->is_deleted = 'Y';
 		$output = executeQuery('svauth.deleteAuthByMemberSrl',$args);
-debugPrint( $args );
-debugPrint( $output );
-		if (!$output->toBool())
+debugPrint($args);
+debugPrint($output);
+		if(!$output->toBool())
 			return $output;
 		return new BaseObject();
 	}
@@ -129,7 +126,7 @@ debugPrint( $output );
 		$args->ci = $aRst["CI"];
 		$args->auth_info = serialize($aRst);
 		$output = executeQuery('svauth.insertAuthLog',$args);
-		if (!$output->toBool()) 
+		if(!$output->toBool()) 
 			return $output;
 	}
 /**
@@ -164,9 +161,8 @@ debugPrint( $output );
 	function procSvauthValidateAuthCode()
 	{
 		$nPluginSrl = Context::get('plugin_srl');
-		if (!$nPluginSrl) 
+		if(!$nPluginSrl) 
 			return new BaseObject(-1, 'no plugin_srl');
-		
 		$oSvauthModel = &getModel('svauth');
 		$oPlugin = $oSvauthModel->getPlugin($nPluginSrl);
 		return $oPlugin->processResult();

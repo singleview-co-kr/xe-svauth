@@ -18,9 +18,9 @@ class svauthAdminModel extends svauth
 		$args->member_srl = $nMemberSrl;
 		$args->is_deleted = 'N';
 		$output = executeQuery('svauth.getAdminMemberAuthCheck', $args);
-		if( count( $output->data ) == 1 )
+		if(count($output->data) == 1)
 			return 'validated';
-		else if( count( $output->data ) == 0 )
+		else if(count($output->data) == 0)
 			return 'not_validated';
 		
 		return 'wiered auth';
@@ -31,9 +31,9 @@ class svauthAdminModel extends svauth
 	public function getMemberAuthInfo($nMemberSrl,$aPrivacyAccess)
 	{
 		$oLoggedInfo = Context::get('logged_info');
-		foreach( $aPrivacyAccess[$oLoggedInfo->member_srl]->allow_list as $allowval )
+		foreach($aPrivacyAccess[$oLoggedInfo->member_srl]->allow_list as $allowval)
 		{
-			if( !$this->_g_aDefaultPrivacyInfoList[$allowval] )
+			if(!$this->_g_aDefaultPrivacyInfoList[$allowval])
 				$this->_g_aDefaultPrivacyInfoList[$allowval] = 1;
 		}
 		$args->member_srl = $nMemberSrl;
@@ -47,12 +47,12 @@ class svauthAdminModel extends svauth
 	private function _translatePrivacy($oData)
 	{
 		$oParsedData = new stdClass();
-		foreach( $oData as $key=>$val)
+		foreach($oData as $key=>$val)
 		{
 			$sKeyTitle = Context::getLang($key);
-			if( $this->_g_aDefaultPrivacyInfoList[$key] )
+			if($this->_g_aDefaultPrivacyInfoList[$key])
 			{
-				switch( $key )
+				switch($key)
 				{
 					case 'nationality':
 						$val = $val == 'd' ? '내국인':'외국인';
