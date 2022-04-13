@@ -95,16 +95,22 @@ class sv_sms extends SvauthPlugin
 			return new BaseObject(-1, '숫자만 입력 가능합니다.');
 		if(!$phonenum)
 			return new BaseObject(-1, '국가 및 휴대폰 번호를 전부 입력해주세요.');
-		$asExchangeNo = explode(',', $oPluginInfo->forbid_exchange_no);
-		foreach($asExchangeNo as $key => $val)
-		{
-			if(strpos($phonenum,  $val) === 0) 
-				return new BaseObject(-1, '인증이 금지된 국번입니다.');
-		}
+		
+        // var_dump($oPluginInfo->forbid_exchange_no);
+        if($oPluginInfo->forbid_exchange_no)
+        {
+            $asExchangeNo = explode(',', $oPluginInfo->forbid_exchange_no);
+            foreach($asExchangeNo as $key => $val)
+            {
+                if(strpos($phonenum,  $val) === 0) 
+                    return new BaseObject(-1, '인증이 금지된 국번입니다.');
+            }
+        }
 		//load config
 		$oModuleModel = &getModel('module');
 		$oModuleConfig = $oModuleModel->getModuleConfig('svauth');
-		// check duplicated.
+		$args = new stdClass();
+        // check duplicated.
 		if($oModuleConfig->free_di == 'N') // forbid duplication
 		{		 
 			$args->clue = $phonenum;
@@ -159,6 +165,7 @@ class sv_sms extends SvauthPlugin
 			return new BaseObject(-1, '잦은 인증번호 요청으로 금지되셨습니다. 내일 다시 시도해주십시오.');
 		}
 		// check day try limit
+        $args = new stdClass();
 		$args->module_srl = $nRequestModuleSrl;
 		$args->clue = $phonenum;
 		$args->regdate = date('YmdHis', time()-$oPluginInfo->authcode_delay_sec);
@@ -175,6 +182,7 @@ class sv_sms extends SvauthPlugin
 
 		// check abusing by IP begin
 		// check day try limit
+        $args = new stdClass();
 		$args->module_srl = $nRequestModuleSrl;
 		$args->ipaddress = $_SERVER['REMOTE_ADDR'];
 		$args->regdate = date("Ymd", mktime(0,0,0,date("m"),date("d"),date("Y")));
@@ -191,6 +199,7 @@ class sv_sms extends SvauthPlugin
 			}
 		}
 		// check day try limit
+        $args = new stdClass();
 		$args->module_srl = $nRequestModuleSrl;
 		$args->ipaddress = $_SERVER['REMOTE_ADDR'];
 		$args->regdate = date('YmdHis', time()-$oPluginInfo->duplicate_restriction_sec);
@@ -212,6 +221,7 @@ class sv_sms extends SvauthPlugin
 		// check abusing by IP end
 		unset($args);
 		// save auth info
+        $args = new stdClass();
 		$args->country_code = 82;
 		$args->module_srl = $nRequestModuleSrl;
 		$args->clue = $phonenum;

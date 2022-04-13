@@ -103,7 +103,7 @@ class svauthModel extends svauth
 		$plugin = $info->plugin;
 		$plugin_srl = $info->plugin_srl;
 		$vars = unserialize($info->extra_vars);
-		$output = $this->_getPluginsXmlInfo($plugin, $vars);
+		$output = $this->getPluginsXmlInfo($plugin, $vars);
 		$output->plugin_title = $plugin_title;
 		$output->plugin = $plugin;
 		$output->plugin_srl = $plugin_srl;
@@ -112,7 +112,7 @@ class svauthModel extends svauth
 /**
  * @brief parse xml, retrieve plugin info.
  **/
-	private function _getPluginsXmlInfo($plugin, $vars=array())
+	public function getPluginsXmlInfo($plugin, $vars=[])
 	{
 		$plugin_path = _XE_PATH_."modules/svauth/plugins/".$plugin;
 		$xml_file = sprintf(_XE_PATH_."modules/svauth/plugins/%s/info.xml", $plugin);
@@ -169,13 +169,13 @@ class svauthModel extends svauth
 				$extra_var_count = count($extra_vars);
 
 				$buff .= sprintf('$plugin_info->extra_var_count = "%s";', $extra_var_count);
+                $buff .= sprintf('$plugin_info->extra_var = new stdClass();');
 				for($i=0;$i<$extra_var_count;$i++)
 				{
 					unset($var);
 					unset($options);
 					$var = $extra_vars[$i];
 					$name = $var->attrs->name;
-                    $buff .= sprintf('$plugin_info->extra_var = new stdClass();');
                     $buff .= sprintf('$plugin_info->extra_var->%s = new stdClass();', $name);
 					$buff .= sprintf('$plugin_info->extra_var->%s->group = "%s";', $name, $group->title->body);
 					$buff .= sprintf('$plugin_info->extra_var->%s->title = "%s";', $name, $var->title->body);

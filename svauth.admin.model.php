@@ -104,7 +104,10 @@ class svauthAdminModel extends svauth
 		$plugin = $info->plugin;
 		$plugin_srl = $info->plugin_srl;
 		$vars = unserialize($info->extra_vars);
-		$output = $this->_getPluginsXmlInfo($plugin, $vars);
+        $oSvauthModel = getModel('svauth');
+        $output = $oSvauthModel->getPluginsXmlInfo($plugin, $vars);
+        unset($oSvauthModel);
+		// $output = $this->_getPluginsXmlInfo($plugin, $vars);
 		$output->plugin_title = $plugin_title;
 		$output->plugin = $plugin;
 		$output->plugin_srl = $plugin_srl;
@@ -122,127 +125,130 @@ class svauthAdminModel extends svauth
 			return;
 		sort($aSearched);
 
-		$list = array();
+        $oSvauthModel = getModel('svauth');
+		$aPluginList = [];
 		for($i=0;$i<$nSearchedCount;$i++)
 		{
 			$sPluginName = $aSearched[$i];
-			$info = $this->_getPluginsXmlInfo($sPluginName);
+			// $info = $this->_getPluginsXmlInfo($sPluginName);
+            $info = $oSvauthModel->getPluginsXmlInfo($sPluginName);
 			$info->plugin = $sPluginName;
-			$list[] = $info;
+			$aPluginList[] = $info;
 		}
-		return $list;
+        unset($oSvauthModel);
+		return $aPluginList;
 	}
 /**
  * @brief parse xml, retrieve plugin info.
  * (this function will be removed in the future)
  **/
-	private function _getPluginsXmlInfo($plugin, $vars=array())
-	{
-		$plugin_path = _XE_PATH_."modules/svauth/plugins/".$plugin;
-		$xml_file = sprintf(_XE_PATH_."modules/svauth/plugins/%s/info.xml", $plugin);
-		if(!file_exists($xml_file)) 
-			return;
+	// private function _getPluginsXmlInfo($plugin, $vars=array())
+	// {
+	// 	$plugin_path = _XE_PATH_."modules/svauth/plugins/".$plugin;
+	// 	$xml_file = sprintf(_XE_PATH_."modules/svauth/plugins/%s/info.xml", $plugin);
+	// 	if(!file_exists($xml_file)) 
+	// 		return;
 
-		$oXmlParser = new XeXmlParser();
-		$tmp_xml_obj = $oXmlParser->loadXmlFile($xml_file);
-		$xml_obj = $tmp_xml_obj->plugin;
-		if(!$xml_obj) 
-			return;
-        $plugin_info = new stdClass();
-		$plugin_info->title = $xml_obj->title->body;
-		$plugin_info->description = $xml_obj->description->body;
-		$plugin_info->version = $xml_obj->version->body;
+	// 	$oXmlParser = new XeXmlParser();
+	// 	$tmp_xml_obj = $oXmlParser->loadXmlFile($xml_file);
+	// 	$xml_obj = $tmp_xml_obj->plugin;
+	// 	if(!$xml_obj) 
+	// 		return;
+    //     $plugin_info = new stdClass();
+	// 	$plugin_info->title = $xml_obj->title->body;
+	// 	$plugin_info->description = $xml_obj->description->body;
+	// 	$plugin_info->version = $xml_obj->version->body;
 
-        $date_obj = new stdClass();
-		sscanf($xml_obj->date->body, '%d-%d-%d', $date_obj->y, $date_obj->m, $date_obj->d);
-		$plugin_info->date = sprintf('%04d%02d%02d', $date_obj->y, $date_obj->m, $date_obj->d);
-		$plugin_info->license = $xml_obj->license->body;
-		$plugin_info->license_link = $xml_obj->license->attrs->link;
+    //     $date_obj = new stdClass();
+	// 	sscanf($xml_obj->date->body, '%d-%d-%d', $date_obj->y, $date_obj->m, $date_obj->d);
+	// 	$plugin_info->date = sprintf('%04d%02d%02d', $date_obj->y, $date_obj->m, $date_obj->d);
+	// 	$plugin_info->license = $xml_obj->license->body;
+	// 	$plugin_info->license_link = $xml_obj->license->attrs->link;
 
-		if(!is_array($xml_obj->author)) 
-			$author_list[] = $xml_obj->author;
-		else 
-			$author_list = $xml_obj->author;
+	// 	if(!is_array($xml_obj->author)) 
+	// 		$author_list[] = $xml_obj->author;
+	// 	else 
+	// 		$author_list = $xml_obj->author;
 
-		foreach($author_list as $author)
-		{
-			$author_obj = new stdClass();
-			$author_obj->name = $author->name->body;
-			$author_obj->email_address = $author->attrs->email_address;
-			$author_obj->homepage = $author->attrs->link;
-			$plugin_info->author[] = $author_obj;
-		}
+	// 	foreach($author_list as $author)
+	// 	{
+	// 		$author_obj = new stdClass();
+	// 		$author_obj->name = $author->name->body;
+	// 		$author_obj->email_address = $author->attrs->email_address;
+	// 		$author_obj->homepage = $author->attrs->link;
+	// 		$plugin_info->author[] = $author_obj;
+	// 	}
 
-		$buff = '';
-		$buff .= sprintf('$plugin_info->site_srl = "%s";', $site_srl);
+	// 	$buff = '';
+	// 	$buff .= sprintf('$plugin_info->site_srl = "%s";', $site_srl);
 
-		// 추가 변수 (템플릿에서 사용할 제작자 정의 변수)
-		$extra_var_groups = $xml_obj->extra_vars->group;
-		if(!$extra_var_groups) 
-			$extra_var_groups = $xml_obj->extra_vars;
-		if(!is_array($extra_var_groups)) 
-			$extra_var_groups = array($extra_var_groups);
-		foreach($extra_var_groups as $group)
-		{
-			$extra_vars = $group->var;
-			if($extra_vars)
-			{
-				if(!is_array($extra_vars)) $extra_vars = array($extra_vars);
+	// 	// 추가 변수 (템플릿에서 사용할 제작자 정의 변수)
+	// 	$extra_var_groups = $xml_obj->extra_vars->group;
+	// 	if(!$extra_var_groups) 
+	// 		$extra_var_groups = $xml_obj->extra_vars;
+	// 	if(!is_array($extra_var_groups)) 
+	// 		$extra_var_groups = array($extra_var_groups);
+	// 	foreach($extra_var_groups as $group)
+	// 	{
+	// 		$extra_vars = $group->var;
+	// 		if($extra_vars)
+	// 		{
+	// 			if(!is_array($extra_vars)) $extra_vars = array($extra_vars);
 
-				$extra_var_count = count($extra_vars);
+	// 			$extra_var_count = count($extra_vars);
 
-				$buff .= sprintf('$plugin_info->extra_var_count = "%s";', $extra_var_count);
-				for($i=0;$i<$extra_var_count;$i++)
-				{
-					unset($var);
-					unset($options);
-					$var = $extra_vars[$i];
-					$name = $var->attrs->name;
-					$buff .= sprintf('$plugin_info->extra_var = new stdClass();');
-                    $buff .= sprintf('$plugin_info->extra_var->%s = new stdClass();', $name);
-                    $buff .= sprintf('$plugin_info->extra_var->%s->group = "%s";', $name, $group->title->body);
-					$buff .= sprintf('$plugin_info->extra_var->%s->title = "%s";', $name, $var->title->body);
-					$buff .= sprintf('$plugin_info->extra_var->%s->type = "%s";', $name, $var->attrs->type);
-					$buff .= sprintf('$plugin_info->extra_var->%s->default = "%s";', $name, $var->attrs->default);
-					if ($var->attrs->type=='image'&&$var->attrs->location) 
-						$buff .= sprintf('$plugin_info->extra_var->%s->location = "%s";', $name, $var->attrs->location);
-					$buff .= sprintf('$plugin_info->extra_var->%s->value = $vars->%s;', $name, $name);
-					$buff .= sprintf('$plugin_info->extra_var->%s->description = "%s";', $name, str_replace('"','\"',$var->description->body));
+	// 			$buff .= sprintf('$plugin_info->extra_var_count = "%s";', $extra_var_count);
+	// 			for($i=0;$i<$extra_var_count;$i++)
+	// 			{
+	// 				unset($var);
+	// 				unset($options);
+	// 				$var = $extra_vars[$i];
+	// 				$name = $var->attrs->name;
+	// 				$buff .= sprintf('$plugin_info->extra_var = new stdClass();');
+    //                 $buff .= sprintf('$plugin_info->extra_var->%s = new stdClass();', $name);
+    //                 $buff .= sprintf('$plugin_info->extra_var->%s->group = "%s";', $name, $group->title->body);
+	// 				$buff .= sprintf('$plugin_info->extra_var->%s->title = "%s";', $name, $var->title->body);
+	// 				$buff .= sprintf('$plugin_info->extra_var->%s->type = "%s";', $name, $var->attrs->type);
+	// 				$buff .= sprintf('$plugin_info->extra_var->%s->default = "%s";', $name, $var->attrs->default);
+	// 				if ($var->attrs->type=='image'&&$var->attrs->location) 
+	// 					$buff .= sprintf('$plugin_info->extra_var->%s->location = "%s";', $name, $var->attrs->location);
+	// 				$buff .= sprintf('$plugin_info->extra_var->%s->value = $vars->%s;', $name, $name);
+	// 				$buff .= sprintf('$plugin_info->extra_var->%s->description = "%s";', $name, str_replace('"','\"',$var->description->body));
 
-					$options = $var->options;
-					if(!$options) 
-						continue;
+	// 				$options = $var->options;
+	// 				if(!$options) 
+	// 					continue;
 
-					if(!is_array($options)) 
-						$options = array($options);
-					$options_count = count($options);
-					$thumbnail_exist = false;
-					for($j=0; $j < $options_count; $j++)
-					{
-						$thumbnail = $options[$j]->attrs->src;
-						if($thumbnail)
-						{
-							$thumbnail = $plugin_path.$thumbnail;
-							if(file_exists($thumbnail))
-							{
-								$buff .= sprintf('$plugin_info->extra_var->%s->options["%s"]->thumbnail = "%s";', $var->attrs->name, $options[$j]->attrs->value, $thumbnail);
-								if(!$thumbnail_exist)
-								{
-									$buff .= sprintf('$plugin_info->extra_var->%s->thumbnail_exist = true;', $var->attrs->name);
-									$thumbnail_exist = true;
-								}
-							}
-						}
-						$buff .= sprintf('$plugin_info->extra_var->%s->options["%s"]->val = "%s";', $var->attrs->name, $options[$j]->attrs->value, $options[$j]->title->body);
-					}
-				}
-			}
-		}
-		if ($buff) 
-			eval($buff);
+	// 				if(!is_array($options)) 
+	// 					$options = array($options);
+	// 				$options_count = count($options);
+	// 				$thumbnail_exist = false;
+	// 				for($j=0; $j < $options_count; $j++)
+	// 				{
+	// 					$thumbnail = $options[$j]->attrs->src;
+	// 					if($thumbnail)
+	// 					{
+	// 						$thumbnail = $plugin_path.$thumbnail;
+	// 						if(file_exists($thumbnail))
+	// 						{
+	// 							$buff .= sprintf('$plugin_info->extra_var->%s->options["%s"]->thumbnail = "%s";', $var->attrs->name, $options[$j]->attrs->value, $thumbnail);
+	// 							if(!$thumbnail_exist)
+	// 							{
+	// 								$buff .= sprintf('$plugin_info->extra_var->%s->thumbnail_exist = true;', $var->attrs->name);
+	// 								$thumbnail_exist = true;
+	// 							}
+	// 						}
+	// 					}
+	// 					$buff .= sprintf('$plugin_info->extra_var->%s->options["%s"]->val = "%s";', $var->attrs->name, $options[$j]->attrs->value, $options[$j]->title->body);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	if ($buff) 
+	// 		eval($buff);
 
-		return $plugin_info;
-	}
+	// 	return $plugin_info;
+	// }
 }
 /* End of file svauth.admin.model.php */
 /* Location: ./modules/svauth/svauth.admin.model.php */
