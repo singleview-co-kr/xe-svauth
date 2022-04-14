@@ -296,6 +296,7 @@ class sv_sms extends SvauthPlugin
  */
 	private function _verifyAuthCode()
 	{
+        $args = new stdClass();
 		$args->sms_auth_srl = (int)$_SESSION['svauth_sms_auth_srl'];
 		$output = executeQuery('svauth.getSmsAuth', $args);
 		if(!$output->toBool()) 

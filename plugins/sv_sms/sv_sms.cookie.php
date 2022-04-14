@@ -7,7 +7,7 @@
 **/ 
 class svauthSmsCookie
 {
-	var $_g_sSvauthSmsCookieName = '';
+	var $_g_sSvauthSmsCookieName = 'xe_sv_sms';
 /**
  * @brief Initialization
  */
@@ -20,7 +20,7 @@ class svauthSmsCookie
  */
 	public function setRestricted( $nSec )
 	{
-		setcookie( $this->_g_sSvauthSmsCookieName, 'restricted', time()+$nSec, '/' );
+		setcookie($this->_g_sSvauthSmsCookieName, 'restricted', time()+$nSec, '/');
 	}
 /**
  * @brief 

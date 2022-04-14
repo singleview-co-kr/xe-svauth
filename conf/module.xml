@@ -27,6 +27,7 @@
 		<action name="procSvauthAdminDeleteSmsAuth" type="controller" />
 		
 		<action name="procSvauthSetAuthCode" type="controller" />
+        <action name="procSvauthSetAuthCodeMemberAjax" type="controller" />
 		<action name="procSvauthValidateAuthCode" type="controller" />
     </actions>
 </module>

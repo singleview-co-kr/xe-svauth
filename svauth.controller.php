@@ -6,6 +6,7 @@
 **/ 
 class svauthController extends svauth 
 {
+    const MEMBER_MOBILE_AUTH_SRL = 1;
 /**
  * @brief initialization
  **/
@@ -17,10 +18,9 @@ class svauthController extends svauth
  **/
 	public function triggerInsertDocument(&$obj) 
 	{
-//var_dump( $obj);
-//exit;
 		$oModuleModel = &getModel('module');
 		$oConfig = $oModuleModel->getModuleConfig('svauth');
+        unset($oModuleModel);
 		$nModuleSrl = $obj->module_srl;
 		$nSvPluginSrl = $obj->sv_plugin_srl;
 		if(isset($oConfig->board_plugin[$nModuleSrl]))
@@ -48,20 +48,38 @@ class svauthController extends svauth
 /**
  * @brief 회원 DB 추가전 트리거 (세션값들을 extra_vars에 입력함)
  **/
-	function triggerInsertMemberBefore(&$obj) 
+	function triggerInsertMemberBefore(&$obj)
 	{
 		$oModuleModel = &getModel('module');
-		$config = $oModuleModel->getModuleConfig('svauth');
-		if(!(int)$config->plugin_srl ) // svauth_plugin이 설정되어 있지 않으면 intercept 중지
+		$oConfig = $oModuleModel->getModuleConfig('svauth');
+        unset($oModuleModel);
+        $nPluginSrl = (int)$oConfig->plugin_srl;
+		if(!$nPluginSrl) // svauth_plugin이 설정되어 있지 않으면 intercept 중지
 			return new BaseObject();
 		$oSvauthModel = getModel('svauth');
-		$aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
-        if($aAuth['user_name'])
-			$obj->user_name = $aAuth['user_name'];
+        $oMemberRegistrationPluginInfo = $oSvauthModel->getPlugin($nPluginSrl);
+        if($oMemberRegistrationPluginInfo->_g_oPluginInfo->plugin == 'kcb_okcert3')
+        {
+            $aAuth = $oSvauthModel->getAuthLog($_COOKIE['sv_auth_info']);
+            if($aAuth['user_name'])
+                $obj->user_name = $aAuth['user_name'];
+        }
+        else
+        {
+            Context::set('module_srl', self::MEMBER_MOBILE_AUTH_SRL);
+            Context::set('plugin_srl', $nPluginSrl);
+            Context::set('phone_number', $obj->mobile);
+            $oRst = $this->procSvauthValidateAuthCode();
+            if(!$oRst->toBool()) 
+                return new BaseObject(-1, $oRst->message);
+        }
+        unset($oConfig);
+        unset($oSvauthModel);
+        unset($oMemberRegistrationPluginInfo);
 		return new BaseObject();
 	}
 /**
- * @brief 회원 DB 추가후 인증시도가 검색되면 세션값 저장
+ * @brief kcb_okcert3 회원 DB 추가후 인증시도가 검색되면 세션값 저장
  **/
 	function triggerInsertMemberAfter(&$obj) 
 	{
@@ -94,7 +112,6 @@ class svauthController extends svauth
 		unset($oSvauthModel);
 		unset($oSvauargsthModel);
 		setcookie('sv_auth_info', '', 0, '/');
-		//unset($_SESSION['auth_info']);
 		return new BaseObject();
 	}
 /**
@@ -104,14 +121,12 @@ class svauthController extends svauth
  **/
 	function triggerDeleteMemberBefore(&$obj) 
 	{
-		$args = new stdClass();
-		$args->member_srl = $obj->member_srl;
-		$args->is_deleted = 'Y';
-		$output = executeQuery('svauth.deleteAuthByMemberSrl',$args);
-debugPrint($args);
-debugPrint($output);
-		if(!$output->toBool())
-			return $output;
+		$oArgs = new stdClass();
+		$oArgs->member_srl = $obj->member_srl;
+		$oArgs->is_deleted = 'Y';
+		$oRst = executeQuery('svauth.deleteAuthByMemberSrl',$oArgs);
+		if(!$oRst->toBool())
+			return $oRst;
 		return new BaseObject();
 	}
 /**
@@ -130,7 +145,7 @@ debugPrint($output);
 			return $output;
 	}
 /**
- * @brief initiate SMS auth code
+ * @brief initiate SMS auth code for a certain module
  **/
 	function procSvauthSetAuthCode($nRequestModuleSrl=null)
 	{
@@ -155,6 +170,35 @@ debugPrint($output);
 		// svdocs.controller.php::procSvdocsSetAuthCode()에서 호출할 때 반환 
 		return new BaseObject(0, '인증번호를 발송하였습니다.');
 	}
+/**
+ * @brief initiate SMS auth code for member registration only
+ **/
+function procSvauthSetAuthCodeMemberAjax()
+{
+    $oModuleModel = getModel('module');
+    $oSvauthConfig = $oModuleModel->getModuleConfig('svauth');
+    unset($oModuleModel);
+    $nCertifyPluginSrl = $oSvauthConfig->plugin_srl;
+    $oSvauthModel = getModel('svauth');
+    $oMemberRegistrationPluginInfo = $oSvauthModel->getPlugin($nCertifyPluginSrl);
+    if($oMemberRegistrationPluginInfo->_g_oPluginInfo->plugin == 'sv_sms')
+    {
+        $nPluginSrl = $oMemberRegistrationPluginInfo->_g_oPluginInfo->plugin_srl;
+        $oPlugin = $oSvauthModel->getPlugin($nPluginSrl);
+		$oRst = $oPlugin->setSmsAuthCode(self::MEMBER_MOBILE_AUTH_SRL);
+        unset($oMemberRegistrationPluginInfo);    
+        unset($oSvauthModel);
+		if(!$oRst->toBool()) 
+			return $oRst;
+		// svauth module에서 ajax 호출할 때 반환 
+		$this->setMessage('인증번호를 발송하였습니다.');
+		// svdocs.controller.php::procSvdocsSetAuthCode()에서 호출할 때 반환 
+		return new BaseObject(0, '인증번호를 발송하였습니다.');
+    }
+    unset($oMemberRegistrationPluginInfo);    
+    unset($oSvauthModel);
+}
+    
 /**
  * @brief validate phone number
  **/
