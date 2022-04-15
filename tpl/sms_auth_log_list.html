@@ -8,7 +8,8 @@
 		<tr>
 			<th scope="col">{$lang->no}</th>
 			<th scope="col">{$lang->auth_mobile_no}</th>
-			<th scope="col">{$lang->auth_code}</th>
+			<th scope="col">{$lang->auth_passed}</th>
+            <th scope="col">{$lang->auth_code}</th>
 			<th scope="col">{$lang->auth_date}</th>
 			<th scope="col"><input type="checkbox" data-name="cart" title="Check All" /></th>
 		</tr>
@@ -17,7 +18,8 @@
 		<tr loop="$auth_list=>$no,$val">
 			<td>{$no}</td>
 			<td>{$val->clue}</td>
-			<td>{$val->authcode}</td>
+			<td>{$val->passed}</td>
+            <td>{$val->authcode}</td>
 			<td>{zdate($val->regdate,"Y-m-d H:i:s")}</td>
 			<td><input type="checkbox" name="cart" value="{$val->sms_auth_srl}" data-clue="{$val->clue}" data-authcode="{$val->authcode}" /></td>
 		</tr>

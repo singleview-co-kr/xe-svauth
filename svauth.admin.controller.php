@@ -188,6 +188,7 @@ class svauthAdminController extends svauth
 	function procSvauthAdminDeleteSmsAuth()
 	{
 		$aSmsAuthSrl = Context::get('sms_auth_srls');
+		$args = new stdClass();
 		foreach($aSmsAuthSrl as $key=>$val)
 		{
 			$args->sms_auth_srl = $val;

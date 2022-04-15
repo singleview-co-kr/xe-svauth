@@ -84,6 +84,9 @@ is_interested value="1"<BR>
 	<item name="auth_code">
 		<value xml:lang="ko"><![CDATA[인증코드]]></value>
 	</item>
+    <item name="auth_passed">
+		<value xml:lang="ko"><![CDATA[인증여부]]></value>
+	</item>
 	<item name="user_name">
 		<value xml:lang="ko"><![CDATA[인증실명]]></value>
 	</item>
