@@ -64,8 +64,13 @@ class svauthController extends svauth
             if($aAuth['user_name'])
                 $obj->user_name = $aAuth['user_name'];
         }
-        else
+        else  // 회원 가입 시 SMS 인증
         {
+			$oMemberClass = getClass('member');
+			$nLocalMemberRegistration= $oMemberClass::REFERRER_LOCALHOST;
+			unset($oMemberClass);
+			if($obj->referral != $nLocalMemberRegistration)
+				return new BaseObject();
             Context::set('module_srl', self::MEMBER_MOBILE_AUTH_SRL);
             Context::set('plugin_srl', $nPluginSrl);
             Context::set('phone_number', $obj->mobile);
