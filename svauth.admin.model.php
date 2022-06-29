@@ -15,9 +15,11 @@ class svauthAdminModel extends svauth
  **/
 	public function getMemberAuthCheck($nMemberSrl)
 	{
+		$args = new stdClass();
 		$args->member_srl = $nMemberSrl;
 		$args->is_deleted = 'N';
 		$output = executeQuery('svauth.getAdminMemberAuthCheck', $args);
+		unset($args);
 		if(count($output->data) == 1)
 			return 'validated';
 		else if(count($output->data) == 0)
